@@ -5,6 +5,7 @@ import BasketIcon from "../../assets/icons/BasketIcon";
 import SearchIcon from "../../assets/icons/SearchIcon";
 import { Button, Input } from "antd";
 import BasketSidebar from "../BasketSidebar/BasketSidebar";
+import { Link } from "react-router-dom";
 
 function SubHeader() {
   const [basketOpen, setBasketOpen] = useState(false);
@@ -21,9 +22,11 @@ function SubHeader() {
           <SearchIcon width={24} />
         </span>
       </div>
-      <div className="desktop:w-full flex justify-end gap-[10px] h-fit">
+      <div className="desktop:w-full flex justify-end items-center gap-[10px] h-fit">
         <HeartIcon width={24} specialClass="cursor-pointer fill-none" />
-        <ProfileIcon width={24} specialClass="cursor-pointer fill-none" />
+        <Link to="/profile">
+          <ProfileIcon width={24} specialClass="cursor-pointer fill-none" />
+        </Link>
         <div
           onClick={() => setBasketOpen(true)}
           className="relative flex cursor-pointer"

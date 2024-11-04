@@ -15,7 +15,7 @@ function BreadcrumbSection() {
       const isLast = index === pathnames.length - 1;
       return {
         title: isLast ? (
-          value
+          value.charAt(0).toUpperCase() + value.slice(1)
         ) : (
           <Link to={routeTo}>
             {value.charAt(0).toUpperCase() + value.slice(1)}

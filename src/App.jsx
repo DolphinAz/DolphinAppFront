@@ -10,6 +10,7 @@ import Auth from "./pages/Auth/Auth";
 import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
 import Detail from "./pages/Detail/Detail";
+import Profile from "./pages/Profile/Profile";
 
 function App() {
   const location = useLocation();
@@ -44,6 +45,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/detail/:id" element={<Detail />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
       {activateLayout ? <Footer /> : ""}
     </>
