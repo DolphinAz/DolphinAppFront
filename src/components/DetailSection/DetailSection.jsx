@@ -31,7 +31,7 @@ function DetailSection() {
   ];
 
   return (
-    <section className="px-5 desktop:px-10 py-[50px] desktop:grid desktop:grid-cols-[2fr_1fr] gap-[50px]">
+    <section className="px-5 desktop:px-10 py-8 desktop:py-[50px] desktop:grid desktop:grid-cols-[2fr_1fr] gap-[50px]">
       <Flex className="flex-col desktop:flex-row gap-5 desktop:gap-8">
         <div className="relative desktop:w-[299px] h-[177px] desktop:h-[323px]">
           <img
