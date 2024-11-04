@@ -1,0 +1,36 @@
+* {
+  font-family: Poppins !important;
+  box-sizing: border-box;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 4px;
+  border-radius: 16px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  border-radius: 16px;
+  background-color: #0b84bc;
+}
+
+.custom-clipPath {
+  clip-path: polygon(0 0, 100% 0%, 54% 100%, 0% 100%);
+}
+
+.custom-tab .ant-tabs-tab-btn {
+  font-size: 18px;
+}
+
+.custom-tab .ant-tabs-nav {
+  margin: 0 40px;
+  border-bottom: 1px solid #e4e4e4;
+}
+
+.custom-tab .ant-tabs-nav::before {
+  padding: 0 10rem;
+  border: none;
+}
