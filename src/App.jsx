@@ -9,6 +9,7 @@ import Footer from "./components/Footer/Footer";
 import Auth from "./pages/Auth/Auth";
 import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
+import Detail from "./pages/Detail/Detail";
 
 function App() {
   const location = useLocation();
@@ -42,6 +43,7 @@ function App() {
         <Route path="/register" element={<Auth />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/detail/:id" element={<Detail />} />
       </Routes>
       {activateLayout ? <Footer /> : ""}
     </>

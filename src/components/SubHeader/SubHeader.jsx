@@ -29,7 +29,10 @@ function SubHeader() {
           className="relative flex cursor-pointer"
         >
           <Button className="p-0 border-none shadow-none">
-            <BasketIcon width={24} specialClass={"cursor-pointer fill-none"} />
+            <BasketIcon
+              width={24}
+              specialClass={"cursor-pointer fill-black-100"}
+            />
           </Button>
           <span className="absolute flex justify-center items-center -top-1 -right-2 bg-skyBlue-500 p-1 w-5 h-5 rounded-full text-white text-sm">
             20

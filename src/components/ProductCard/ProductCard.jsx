@@ -4,12 +4,16 @@ import FaveoriteIconFill from "../../assets/icons/FaveoriteIconFill";
 import FavoriteIcon from "../../assets/icons/FavoriteIcon";
 import AddToCartIcon from "../../assets/icons/AddToCartIcon";
 import StarIcon from "../../assets/icons/StarIcon";
+import { Link } from "react-router-dom";
 
 function ProductCard() {
   const [isFavorited, setIsFavorited] = useState(false);
 
   return (
-    <div className="px-[10px] py-2 w-full h-fit bg-gray-400 rounded-[10px] flex flex-col gap-[6px] group border border-gray-200">
+    <Link
+      to={"/detail/1"}
+      className="px-[10px] py-2 w-full h-fit bg-gray-400 rounded-[10px] flex flex-col gap-[6px] group border border-gray-200"
+    >
       <div className="relative w-full h-[128px] rounded-[10px]">
         <img
           className="w-full h-full object-cover rounded-[10px]"
@@ -68,7 +72,7 @@ function ProductCard() {
         <AddToCartIcon />
         Səbətə at
       </Button>
-    </div>
+    </Link>
   );
 }
 

@@ -27,11 +27,11 @@ function ContactForm() {
         rules={[
           {
             required: true,
-            message: "Please input your First name!",
+            message: "Please input your first name!",
           },
         ]}
       >
-        <Input />
+        <Input className="py-3 px-4" placeholder="First name" />
       </Form.Item>
       <Form.Item
         label="Email"
@@ -39,38 +39,59 @@ function ContactForm() {
         rules={[
           {
             required: true,
-            message: "Please input your Email!",
+            message: "Please input your email!",
           },
         ]}
       >
-        <Input className="py-3 px-4" />
+        <Input className="py-3 px-4" placeholder="you@company.com" />
       </Form.Item>
 
       <Form.Item
+        label="Phone"
         name="phone"
         rules={[
           {
             required: true,
-            message: "Please input your Phone!",
+            message: "Please input your phone!",
           },
         ]}
       >
-        <InputNumber />
+        <InputNumber
+          className="py-3 px-4 w-full"
+          placeholder="(555) 000-0000"
+        />
       </Form.Item>
 
-      <Form.Item label="Message">
+      <Form.Item
+        label="Message"
+        name="message"
+        rules={[
+          {
+            required: true,
+            message: "Please input your phone!",
+          },
+        ]}
+      >
         <TextArea style={{ resize: "none" }} rows={4} />
       </Form.Item>
 
       <Form.Item name="remember" valuePropName="checked">
-        <Checkbox>
-          Siz bizim mehriban <span>məxfilik siyasətimizlə</span> razılaşırsınız?
+        <Checkbox className="flex items-center">
+          <p className="text-black-300 flex gap-1">
+            Siz bizim mehriban
+            <span className="underline">məxfilik siyasətimizlə</span>
+            razılaşırsınız?
+          </p>
         </Checkbox>
       </Form.Item>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit">
-          Submit
+        <Button
+          className="bg-skyBlue-500 w-full py-3 h-12 font-semibold"
+          type="primary"
+          htmlType="submit"
+        >
+          Mesaj göndər
         </Button>
       </Form.Item>
     </Form>

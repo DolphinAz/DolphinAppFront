@@ -52,6 +52,7 @@ function Header() {
           <Flex className="gap-5 desktop:gap-[32px] flex flex-col desktop:flex-row">
             {navigations.map((navigation, index) => (
               <Link
+                onClick={() => setBurgerOpen(false)}
                 key={index}
                 className="font-medium hover:text-skyBlue-500 hover:underline"
                 to={navigation.value}
