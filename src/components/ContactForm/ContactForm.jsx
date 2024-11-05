@@ -31,7 +31,7 @@ function ContactForm() {
           },
         ]}
       >
-        <Input className="py-3 px-4" placeholder="First name" />
+        <Input className="py-3 px-4 w-full" placeholder="First name" />
       </Form.Item>
       <Form.Item
         label="Email"
@@ -77,7 +77,7 @@ function ContactForm() {
 
       <Form.Item name="remember" valuePropName="checked">
         <Checkbox className="flex items-center">
-          <p className="text-black-300 flex gap-1">
+          <p className="text-black-300 flex flex-wrap gap-1">
             Siz bizim mehriban
             <span className="underline">məxfilik siyasətimizlə</span>
             razılaşırsınız?
