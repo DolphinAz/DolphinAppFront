@@ -2,6 +2,7 @@ import { Button } from "antd";
 import React from "react";
 import CloseIcon from "../../assets/icons/CloseIcon";
 import TrashIcon from "../../assets/icons/TrashIcon";
+import { Link } from "react-router-dom";
 
 function BasketSidebar({ basketOpen, setBasketOpen }) {
   return (
@@ -74,12 +75,14 @@ function BasketSidebar({ basketOpen, setBasketOpen }) {
               ₼ <span className="font-semibold">50</span>
             </p>
           </div>
-          <Button
-            className="bg-skyBlue-500 h-[46px] py-[17px] px-[30px]"
-            type="primary"
-          >
-            Səbətə get
-          </Button>
+          <Link onClick={() => setBasketOpen(false)} to="/cart">
+            <Button
+              className="bg-skyBlue-500 w-full h-[46px] py-[17px] px-[30px]"
+              type="primary"
+            >
+              Səbətə get
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

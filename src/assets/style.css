@@ -36,3 +36,12 @@
   padding: 0 10rem;
   border: none;
 }
+
+.ant-input-number-handler-wrap {
+  display: none !important;
+}
+
+.cart-input .ant-input-number-input {
+  text-align: center;
+  padding: 10px;
+}

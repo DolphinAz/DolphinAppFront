@@ -11,6 +11,7 @@ import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
 import Detail from "./pages/Detail/Detail";
 import Profile from "./pages/Profile/Profile";
+import Cart from "./pages/Cart/Cart";
 
 function App() {
   const location = useLocation();
@@ -46,6 +47,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/detail/:id" element={<Detail />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/cart" element={<Cart />} />
       </Routes>
       {activateLayout ? <Footer /> : ""}
     </>
