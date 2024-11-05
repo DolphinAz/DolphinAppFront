@@ -4,17 +4,17 @@ import FaveoriteIconFill from "../../assets/icons/FaveoriteIconFill";
 import FavoriteIcon from "../../assets/icons/FavoriteIcon";
 import AddToCartIcon from "../../assets/icons/AddToCartIcon";
 import StarIcon from "../../assets/icons/StarIcon";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function ProductCard() {
   const [isFavorited, setIsFavorited] = useState(false);
-
+  const navigate = useNavigate();
   return (
-    <Link
-      to={"/detail/1"}
-      className="px-[10px] py-2 w-full h-fit bg-gray-400 rounded-[10px] flex flex-col gap-[6px] group border border-gray-200"
-    >
-      <div className="relative w-full h-[128px] rounded-[10px]">
+    <div className="px-[10px] py-2 w-full h-fit bg-gray-400 rounded-[10px] flex flex-col gap-[6px] group border border-gray-200">
+      <div
+        onClick={() => navigate("/detail/1")}
+        className="relative w-full h-[128px] rounded-[10px] cursor-pointer"
+      >
         <img
           className="w-full h-full object-cover rounded-[10px]"
           src="https://static1.colliderimages.com/wordpress/wp-content/uploads/2024/07/deadpool-2016-poster.jpg"
@@ -33,7 +33,10 @@ function ProductCard() {
               }
             >
               <Button
-                onClick={() => setIsFavorited(!isFavorited)}
+                onClick={(e) => {
+                  setIsFavorited(!isFavorited);
+                  e.stopPropagation();
+                }}
                 className="p-0 border-none h-fit group-1"
                 type="submit"
               >
@@ -72,7 +75,7 @@ function ProductCard() {
         <AddToCartIcon />
         Səbətə at
       </Button>
-    </Link>
+    </div>
   );
 }
 

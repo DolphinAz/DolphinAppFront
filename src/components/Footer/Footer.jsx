@@ -42,7 +42,7 @@ function Footer() {
       items: [
         {
           label: "Haqqımızda",
-          value: "/about-us",
+          value: "/about",
         },
         {
           label: "Press",
