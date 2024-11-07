@@ -69,7 +69,7 @@ function ProductCard() {
         </div>
       </div>
       <Button
-        className="bg-skyBlue-500 flex items-center text-white duration-200 h-0 p-0 border-none overflow-hidden group-hover:h-9 group-hover:p-[10px] hover:"
+        className="bg-skyBlue-500 flex items-center text-white duration-200 h-0 p-0 border-none overflow-hidden desktop:group-hover:h-9 desktop:group-hover:p-[10px]"
         type="submit"
       >
         <AddToCartIcon />

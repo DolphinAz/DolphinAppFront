@@ -41,7 +41,9 @@
   display: none !important;
 }
 
-.cart-input .ant-input-number-input {
-  text-align: center;
-  padding: 10px;
+@media screen and (min-width: 1024px) {
+  .cart-input .ant-input-number-input {
+    text-align: center;
+    padding: 10px;
+  }
 }

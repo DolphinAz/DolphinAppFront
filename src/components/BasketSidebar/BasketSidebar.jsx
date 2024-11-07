@@ -8,7 +8,7 @@ function BasketSidebar({ basketOpen, setBasketOpen }) {
   return (
     <div
       onClick={() => setBasketOpen(false)}
-      className={`fixed flex justify-end top-0 left-0 w-full h-[100vh] bg-modal z-10 duration-300 ${
+      className={`fixed flex justify-end top-0 left-0 w-full h-full bg-modal z-10 duration-300 ${
         basketOpen ? "opacity-100 visible" : "opacity-0 invisible"
       }`}
     >
