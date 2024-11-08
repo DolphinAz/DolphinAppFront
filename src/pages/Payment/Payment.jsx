@@ -3,9 +3,11 @@ import CustomerForm from "../../components/CustomerForm/CustomerForm";
 import { Button, Flex } from "antd";
 import PaymentMethodsForm from "../../components/PaymentMethodsForm/PaymentMethodsForm";
 import VerificationForm from "../../components/VerificationForm/VerificationForm";
+import PaymentToast from "../../components/PaymentToast/PaymentToast";
 
 function Payment() {
   const [activeStep, setActiveStep] = useState(0);
+  const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -29,6 +31,10 @@ function Payment() {
 
   return (
     <section className="px-5 desktop:px-10 flex flex-col gap-[50px] pt-28 pb-40">
+      <PaymentToast
+        isOrderPlaced={isOrderPlaced}
+        setIsOrderPlaced={setIsOrderPlaced}
+      />
       <div
         className={`relative w-full bg-gray-950 h-[1px] grid grid-cols-3 place-items-center`}
       >
@@ -86,7 +92,7 @@ function Payment() {
             type="submit"
             className="border-skyBlue-500 bg-gray-1000 py-[14px] h-14 text-lg text-skyBlue-500"
           >
-            Resend
+            Yenidən yoxla
           </Button>
         )}
         {activeStep !== 0 && (

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import siteLogo from "../../assets/images/site-logo.png";
-import { Link } from "react-router-dom";
-import { Button, Flex } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { Button, Dropdown, Flex } from "antd";
 import { Sling as Hamburger } from "hamburger-react";
+import NotificationIcon from "../../assets/icons/NotificationIcon";
 
-function Header() {
+function Header({ isLogged, setIsLogged }) {
+  const navigate = useNavigate();
   const navigations = [
     {
       label: "Haqqımızda",
@@ -31,7 +33,32 @@ function Header() {
       value: "/contact",
     },
   ];
-
+  const items = [
+    {
+      key: "1",
+      label: <Link to="profile">Profil</Link>,
+    },
+    {
+      key: "2",
+      label: <Link to="orders">Sifarişlərim</Link>,
+    },
+    {
+      type: "divider",
+    },
+    {
+      key: "3",
+      label: (
+        <span
+          onClick={() => {
+            setIsLogged(false);
+            navigate("/");
+          }}
+        >
+          Çıxış
+        </span>
+      ),
+    },
+  ];
   const [burgerOpen, setBurgerOpen] = useState(false);
 
   return (
@@ -62,23 +89,52 @@ function Header() {
             ))}
           </Flex>
         </nav>
-        <Flex className="gap-[12px] hidden desktop:flex" align="center">
-          <Link to="login">
-            <Button
-              className="bg-transparent py-[12px] px-[18px] h-fit text-black-200 font-medium text-sm border-0 shadow-none"
-              type="primary"
-            >
-              Giriş
-            </Button>
-          </Link>
-          <Link to="register">
-            <Button
-              className="py-[12px] h-fit px-[30px] font-medium text-sm bg-skyBlue-500 border-0 shadow-none"
-              type="primary"
-            >
-              Qeydiyyat
-            </Button>
-          </Link>
+        <Flex className="hidden desktop:flex" align="center">
+          {isLogged ? (
+            <>
+              <Flex className="gap-6" align="center">
+                <Button className="p-0 border-none shadow-none">
+                  <NotificationIcon />
+                </Button>
+
+                <Dropdown
+                  menu={{
+                    items,
+                  }}
+                >
+                  <a onClick={(e) => e.preventDefault()}>
+                    <Button
+                      className="py-[12px] h-fit px-[30px] font-medium text-sm bg-skyBlue-500 border-0 shadow-none"
+                      type="primary"
+                    >
+                      Əliyev Əli
+                    </Button>
+                  </a>
+                </Dropdown>
+              </Flex>
+            </>
+          ) : (
+            <>
+              <Flex className="gap-3" align="center">
+                <Link to="login">
+                  <Button
+                    className="bg-transparent py-[12px] px-[18px] h-fit text-black-200 font-medium text-sm border-0 shadow-none"
+                    type="primary"
+                  >
+                    Giriş
+                  </Button>
+                </Link>
+                <Link to="register">
+                  <Button
+                    className="py-[12px] h-fit px-[30px] font-medium text-sm bg-skyBlue-500 border-0 shadow-none"
+                    type="primary"
+                  >
+                    Qeydiyyat
+                  </Button>
+                </Link>
+              </Flex>
+            </>
+          )}
         </Flex>
         <div className="block desktop:hidden">
           <Hamburger

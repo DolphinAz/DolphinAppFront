@@ -13,11 +13,17 @@ import Detail from "./pages/Detail/Detail";
 import Profile from "./pages/Profile/Profile";
 import Cart from "./pages/Cart/Cart";
 import Payment from "./pages/Payment/Payment";
+import Error from "./pages/Error/Error";
+import OrderToast from "./components/OrderToast/OrderToast";
+import toast, { Toaster } from "react-hot-toast";
+import successIcon from "./assets/images/success-icon.png";
+import { Flex } from "antd";
 
 function App() {
   const location = useLocation();
+  const [isLogged, setIsLogged] = useState(true);
   const [activateLayout, setActivateLayout] = useState(false);
-
+  const [isOrdered, setIsOrdered] = useState(false);
   useEffect(() => {
     if (location.pathname === "/login" || location.pathname === "/register") {
       setActivateLayout(false);
@@ -32,9 +38,26 @@ function App() {
 
   return (
     <>
+      <Toaster
+        toastOptions={{
+          duration: 2000,
+          style: {
+            backgroundColor: "#FFFAE6",
+            borderRadius: 10,
+            padding: 16,
+            position: "relative",
+            overflow: "hidden",
+          },
+
+          className: "",
+        }}
+        gutter={30}
+        position="top-center"
+        reverseOrder={true}
+      />
       {activateLayout ? (
         <>
-          <Header />
+          <Header isLogged={isLogged} setIsLogged={setIsLogged} />
           <SubHeader />
         </>
       ) : (
@@ -50,6 +73,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="*" element={<Error />} />
       </Routes>
       {activateLayout ? <Footer /> : ""}
     </>

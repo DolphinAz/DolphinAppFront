@@ -15,6 +15,9 @@ export default {
           400: "#9ddefc",
           500: "#0B84BC",
         },
+        surface: {
+          100: "#FFFAE6",
+        },
         border: {
           100: "#F2F4F7",
         },
@@ -48,9 +51,11 @@ export default {
           900: "#E4E7EC",
           950: "#bdbdbd",
           1000: "#F9F9F9",
+          1050: "#F1F1F1",
         },
         yellow: {
           100: "#FFECBA",
+          200: "#FFAB00",
         },
         red: {
           100: "#F04438",

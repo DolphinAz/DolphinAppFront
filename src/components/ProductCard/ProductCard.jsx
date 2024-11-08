@@ -5,6 +5,8 @@ import FavoriteIcon from "../../assets/icons/FavoriteIcon";
 import AddToCartIcon from "../../assets/icons/AddToCartIcon";
 import StarIcon from "../../assets/icons/StarIcon";
 import { Link, useNavigate } from "react-router-dom";
+import OrderToast from "../OrderToast/OrderToast";
+import toast from "react-hot-toast";
 
 function ProductCard() {
   const [isFavorited, setIsFavorited] = useState(false);
@@ -71,6 +73,7 @@ function ProductCard() {
       <Button
         className="bg-skyBlue-500 flex items-center text-white duration-200 h-0 p-0 border-none overflow-hidden desktop:group-hover:h-9 desktop:group-hover:p-[10px]"
         type="submit"
+        onClick={() => toast((t) => <OrderToast t={t} />)}
       >
         <AddToCartIcon />
         Səbətə at
