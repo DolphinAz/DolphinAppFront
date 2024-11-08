@@ -46,6 +46,8 @@ export default {
           800: "#F2F4F7",
           850: "#696969",
           900: "#E4E7EC",
+          950: "#bdbdbd",
+          1000: "#F9F9F9",
         },
         yellow: {
           100: "#FFECBA",

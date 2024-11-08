@@ -12,6 +12,7 @@ import Contact from "./pages/Contact/Contact";
 import Detail from "./pages/Detail/Detail";
 import Profile from "./pages/Profile/Profile";
 import Cart from "./pages/Cart/Cart";
+import Payment from "./pages/Payment/Payment";
 
 function App() {
   const location = useLocation();
@@ -48,6 +49,7 @@ function App() {
         <Route path="/detail/:id" element={<Detail />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/payment" element={<Payment />} />
       </Routes>
       {activateLayout ? <Footer /> : ""}
     </>

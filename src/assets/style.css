@@ -47,3 +47,12 @@
     padding: 10px;
   }
 }
+
+.bg-half-red {
+  background-image: linear-gradient(to right, #101828 50%, transparent 50%);
+}
+
+.custom-select-input .ant-select-selector {
+  border: none !important;
+  height: 100% !important;
+}
