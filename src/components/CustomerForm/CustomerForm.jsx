@@ -35,7 +35,7 @@ function CustomerForm() {
     <Form className="desktop:w-2/4 mx-auto">
       <div className="grid grid-cols-2 gap-6">
         <FormItem
-          className="border-b-2"
+          className="border-b-2 duration-300 focus-within:border-skyBlue-500 payment-input"
           name="name"
           rules={[
             {
@@ -46,11 +46,11 @@ function CustomerForm() {
         >
           <Input
             placeholder="Name"
-            className="border-none rounded-none border-black-100 py-4"
+            className="border-none rounded-none border-black-100 py-4 text-sm desktop:text-base"
           />
         </FormItem>
         <FormItem
-          className="border-0 border-b-2"
+          className="border-0 border-b-2 duration-300 focus-within:border-skyBlue-500 payment-input"
           name="email"
           rules={[
             {
@@ -61,13 +61,13 @@ function CustomerForm() {
         >
           <Input
             placeholder="Email"
-            className="border-none rounded-none border-black-100 py-4"
+            className="border-none rounded-none border-black-100 py-4 text-sm desktop:text-base"
           />
         </FormItem>
       </div>
       <div className="grid grid-cols-2 gap-6">
         <Form.Item
-          className="relative border-b-2"
+          className="relative border-b-2 payment-item duration-300 focus-within:border-skyBlue-500"
           name="country"
           rules={[
             {
@@ -81,13 +81,13 @@ function CustomerForm() {
             filterOption={(input, option) =>
               (option?.value ?? "").toLowerCase().includes(input.toLowerCase())
             }
-            className="custom-select-input absolute"
+            className="payment-input absolute bottom-0 left-0 h-full"
             options={selectableCountry}
             placeholder="Country"
           />
         </Form.Item>
         <FormItem
-          className="border-b-2"
+          className="border-b-2 duration-300 focus-within:border-skyBlue-500 payment-input"
           name="post-code"
           rules={[
             {
@@ -98,13 +98,13 @@ function CustomerForm() {
         >
           <Input
             placeholder="Post code"
-            className="border-none rounded-none border-black-100 py-4"
+            className="border-none rounded-none border-black-100 py-4 text-sm desktop:text-base"
             type="number"
           />
         </FormItem>
       </div>
       <FormItem
-        className="border-0 border-b-2"
+        className="border-0 border-b-2 duration-300 focus-within:border-skyBlue-500 payment-input"
         name="address"
         rules={[
           {
@@ -115,11 +115,11 @@ function CustomerForm() {
       >
         <Input
           placeholder="Address"
-          className="border-none rounded-none border-black-100 py-4"
+          className="border-none rounded-none border-black-100 py-4 text-sm desktop:text-base"
         />
       </FormItem>
       <div className="grid grid-cols-[100px_1fr] gap-6">
-        <Form.Item className="relative border-b-2">
+        <Form.Item className="relative border-b-2 payment-item duration-300 focus-within:border-skyBlue-500">
           <Select
             showSearch
             filterOption={(input, option) =>
@@ -127,13 +127,13 @@ function CustomerForm() {
                 .toLowerCase()
                 .includes(input.toLowerCase())
             }
-            className="custom-select-input absolute"
+            className="payment-input absolute bottom-0 left-0 h-full"
             options={selectableCountryNums}
             placeholder="+994"
           />
         </Form.Item>
         <FormItem
-          className="border-b-2"
+          className="border-b-2 duration-300 focus-within:border-skyBlue-500 payment-input"
           name="phone"
           rules={[
             {
@@ -143,8 +143,8 @@ function CustomerForm() {
           ]}
         >
           <Input
-            placeholder="phone"
-            className="border-none rounded-none border-black-100 py-4"
+            placeholder="Phone"
+            className="border-none rounded-none py-4 text-sm desktop:text-base"
             type="number"
           />
         </FormItem>

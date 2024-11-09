@@ -52,7 +52,33 @@
   background-image: linear-gradient(to right, #101828 50%, transparent 50%);
 }
 
-.custom-select-input .ant-select-selector {
+.payment-input .ant-select-selector {
   border: none !important;
   height: 100% !important;
+  box-shadow: none !important;
+  font-size: 14px;
+}
+
+@media screen and (min-width: 1024px) {
+  .payment-input .ant-select-selector {
+    font-size: 16px;
+  }
+}
+
+.payment-item .ant-form-item-control-input {
+  min-height: 55px;
+}
+
+.ant-btn div:first-child {
+  display: none;
+}
+
+.payment-input .ant-input-outlined {
+  box-shadow: none !important;
+}
+
+.payment-input input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

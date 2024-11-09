@@ -75,36 +75,38 @@ function Payment() {
           </div>
         ))}
       </div>
-      {steps.map(
-        (step, index) =>
-          index === activeStep && <div key={index}>{step.form}</div>
-      )}
-      <Flex vertical className="gap-5">
-        <Button
-          className="bg-skyBlue-500 py-[14px] h-14 text-white text-lg"
-          type="submit"
-          onClick={() => setActiveStep((prev) => prev + 1)}
-        >
-          Davam et
-        </Button>
-        {activeStep === 2 && (
-          <Button
-            type="submit"
-            className="border-skyBlue-500 bg-gray-1000 py-[14px] h-14 text-lg text-skyBlue-500"
-          >
-            Yenidən yoxla
-          </Button>
+      <div>
+        {steps.map(
+          (step, index) =>
+            index === activeStep && <div key={index}>{step.form}</div>
         )}
-        {activeStep !== 0 && (
+        <Flex vertical className="gap-5 w-full desktop:w-2/4 mx-auto">
           <Button
-            onClick={() => setActiveStep((prev) => prev - 1)}
-            className="border-skyBlue-500 bg-gray-1000 py-[14px] h-14 text-lg text-skyBlue-500"
+            className="bg-skyBlue-500 py-[14px] h-14 text-white text-lg"
             type="submit"
+            onClick={() => setActiveStep((prev) => prev + 1)}
           >
-            Geri
+            Davam et
           </Button>
-        )}
-      </Flex>
+          {activeStep === 2 && (
+            <Button
+              type="submit"
+              className="border-skyBlue-500 bg-gray-1000 py-[14px] h-14 text-lg text-skyBlue-500"
+            >
+              Yenidən yoxla
+            </Button>
+          )}
+          {activeStep !== 0 && (
+            <Button
+              onClick={() => setActiveStep((prev) => prev - 1)}
+              className="border-skyBlue-500 bg-gray-1000 py-[14px] h-14 text-lg text-skyBlue-500"
+              type="submit"
+            >
+              Geri
+            </Button>
+          )}
+        </Flex>
+      </div>
     </section>
   );
 }
