@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import successIcon from "../../assets/images/success-icon.png";
 import { Flex } from "antd";
 
-function OrderToast({ t }) {
+function OrderToast({ t, message, icon, progressColor }) {
   const [toastWidth, setToastWidth] = useState(0);
   useEffect(() => {
     if (t?.visible) {
@@ -14,8 +14,8 @@ function OrderToast({ t }) {
 
   return (
     <Flex align="center" gap={14}>
-      <img src={successIcon} alt="Succes Icon" />
-      <p className="font-medium">Uğurla Səbətə əlavə olundu!</p>
+      {icon && <img src={icon} alt="Success Icon" />}
+      <p className="font-medium">{message}</p>
       <div
         style={{
           width: `${toastWidth}%`,
@@ -25,8 +25,7 @@ function OrderToast({ t }) {
           left: 0,
           borderWidth: 3,
           borderStyle: "solid",
-          borderColor: "#ffab00",
-          height: 4,
+          borderColor: progressColor || "#FFAB00",
         }}
       ></div>
     </Flex>

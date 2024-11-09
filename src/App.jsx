@@ -14,16 +14,13 @@ import Profile from "./pages/Profile/Profile";
 import Cart from "./pages/Cart/Cart";
 import Payment from "./pages/Payment/Payment";
 import Error from "./pages/Error/Error";
-import OrderToast from "./components/OrderToast/OrderToast";
 import toast, { Toaster } from "react-hot-toast";
-import successIcon from "./assets/images/success-icon.png";
-import { Flex } from "antd";
+import OrderToast from "./components/OrderToast/OrderToast";
 
 function App() {
   const location = useLocation();
   const [isLogged, setIsLogged] = useState(true);
   const [activateLayout, setActivateLayout] = useState(false);
-  const [isOrdered, setIsOrdered] = useState(false);
   useEffect(() => {
     if (location.pathname === "/login" || location.pathname === "/register") {
       setActivateLayout(false);
@@ -42,7 +39,7 @@ function App() {
         toastOptions={{
           duration: 2000,
           style: {
-            backgroundColor: "#FFFAE6",
+            // backgroundColor: "#FFFAE6",
             borderRadius: 10,
             padding: 16,
             position: "relative",
