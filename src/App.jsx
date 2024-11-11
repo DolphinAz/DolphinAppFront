@@ -19,7 +19,7 @@ import OrderToast from "./components/OrderToast/OrderToast";
 
 function App() {
   const location = useLocation();
-  const [isLogged, setIsLogged] = useState(true);
+  const [isLogged, setIsLogged] = useState(false);
   const [activateLayout, setActivateLayout] = useState(false);
   useEffect(() => {
     if (location.pathname === "/login" || location.pathname === "/register") {

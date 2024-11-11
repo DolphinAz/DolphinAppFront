@@ -20,9 +20,11 @@ function LoginForm() {
   });
 
   const onFinish = (values) => {
-    console.log(errors);
+    const isInputEmpty = Object.values(values).every(
+      (item) => item !== undefined
+    );
 
-    if (Object.keys(errors).length === 0) {
+    if (Object.keys(errors).length === 0 && isInputEmpty) {
       try {
         setButtonDisabled(true);
         axios
@@ -41,6 +43,7 @@ function LoginForm() {
           .finally(() => setButtonDisabled(false));
       } catch (error) {
         console.log(error);
+        toast.error(error);
       }
     } else {
       toast.error("Please fill all inputs!");
@@ -106,8 +109,8 @@ function LoginForm() {
         </Form.Item>
 
         <Flex justify="space-between" align="center">
-          <Form.Item className="m-0" name="remember" valuePropName="checked">
-            <Checkbox className="desktop:text-sm text-[12px]">
+          <Form.Item className="m-0" valuePropName="checked">
+            <Checkbox name="remember" className="desktop:text-sm text-[12px]">
               Məni xatırla
             </Checkbox>
           </Form.Item>

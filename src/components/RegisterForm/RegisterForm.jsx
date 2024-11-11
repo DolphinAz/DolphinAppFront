@@ -21,7 +21,10 @@ function RegisterForm() {
   });
 
   const onFinish = (values) => {
-    if (Object.keys(errors).length === 0) {
+    const isInputEmpty = Object.values(values).every(
+      (item) => item !== undefined
+    );
+    if (Object.keys(errors).length === 0 && isInputEmpty) {
       setButtonDisabled(true);
       try {
         axios

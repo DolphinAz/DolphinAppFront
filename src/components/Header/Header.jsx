@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import siteLogo from "../../assets/images/site-logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Dropdown, Flex } from "antd";
 import { Sling as Hamburger } from "hamburger-react";
 import NotificationIcon from "../../assets/icons/NotificationIcon";
+import axios from "axios";
+import { baseUrl } from "../../constants/baseUrl";
 
 function Header({ isLogged, setIsLogged }) {
+  const infoUrl = "/api/identity/info";
+  const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
   const navigations = [
     {
@@ -52,6 +56,9 @@ function Header({ isLogged, setIsLogged }) {
           onClick={() => {
             setIsLogged(false);
             navigate("/");
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("expiration");
           }}
         >
           Çıxış
@@ -59,8 +66,25 @@ function Header({ isLogged, setIsLogged }) {
       ),
     },
   ];
-  const [burgerOpen, setBurgerOpen] = useState(false);
 
+  const accessToken = localStorage.getItem("accessToken");
+  useEffect(() => {
+    if (accessToken) {
+      axios
+        .get(baseUrl + infoUrl, {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((res) => setUserData(res.data.data));
+      setIsLogged(true);
+    } else {
+      setIsLogged(false);
+    }
+  }, [accessToken]);
+
+  const [burgerOpen, setBurgerOpen] = useState(false);
   return (
     <header className="mx-auto px-5 desktop:px-10 py-[18px] border-b border-border-100">
       <Flex
@@ -107,7 +131,7 @@ function Header({ isLogged, setIsLogged }) {
                       className="py-[12px] h-fit px-[30px] font-medium text-sm bg-skyBlue-500 border-0 shadow-none"
                       type="primary"
                     >
-                      Əliyev Əli
+                      {userData?.name}
                     </Button>
                   </a>
                 </Dropdown>
