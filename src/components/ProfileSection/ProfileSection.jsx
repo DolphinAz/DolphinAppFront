@@ -1,24 +1,33 @@
 import { Flex } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import EditIcon from "../../assets/icons/EditIcon";
 import ProfileForm from "../ProfileForm/ProfileForm";
 import PasswordForm from "../PasswordForm/PasswordForm";
 import OrdersSection from "../OrdersSection/OrdersSection";
+import axios from "axios";
+import { baseUrl } from "../../constants/baseUrl";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function ProfileSection() {
+  const infoUrl = "/api/identity/info";
+  const accessToken = localStorage.getItem("accessToken");
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
   const [activeNav, setActiveNav] = useState("Profil");
+
   const navigations = [
     {
       label: "Profil",
-      component: <ProfileForm />,
+      component: <ProfileForm userData={userData} />,
     },
     {
       label: "Parol",
-      component: <PasswordForm />,
+      component: <PasswordForm userData={userData} />,
     },
     {
       label: "Sifarişlərim",
-      component: <OrdersSection />,
+      component: <OrdersSection userData={userData} />,
     },
     {
       label: "Suallarım",
@@ -27,12 +36,27 @@ function ProfileSection() {
       label: "Bildirişlər",
     },
   ];
-
+  useEffect(() => {
+    if (accessToken) {
+      axios
+        .get(baseUrl + infoUrl, {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .then((res) => setUserData(res.data.data))
+        .catch((err) => {
+          toast.error(err);
+          console.log(err);
+        });
+    }
+  }, [accessToken]);
   return (
     <section className="px-5 desktop:px-10 pt-8 pb-32 flex flex-col gap-9">
       <Flex vertical className="gap-[10px] desktop:gap-[5px]">
         <h1 className="flex items-center gap-3 text-xl font-medium">
-          Peter Griffin <EditIcon />
+          {userData?.name} <EditIcon />
         </h1>
         <p className="text-sm text-gray-650">
           Update your username and manage your account
@@ -58,7 +82,15 @@ function ProfileSection() {
               ))}
             </ul>
             <Flex vertical gap={23}>
-              <button className="p-0 text-gray-650 justify-start h-fit w-fit">
+              <button
+                onClick={() => {
+                  localStorage.removeItem("accessToken");
+                  localStorage.removeItem("refreshToken");
+                  localStorage.removeItem("expiration");
+                  navigate("/");
+                }}
+                className="p-0 text-gray-650 justify-start h-fit w-fit"
+              >
                 Çıxış
               </button>
               <button className="p-0 text-red-100 justify-start h-fit w-fit">

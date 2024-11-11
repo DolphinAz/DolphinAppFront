@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 
 function SubHeader() {
   const [basketOpen, setBasketOpen] = useState(false);
-
+  const accessToken = localStorage.getItem("accessToken");
   return (
     <div className="flex gap-5 desktop:grid desktop:grid-cols-3 desktop:gap-0 pt-5 px-5 pb-2 desktop:px-10 place-items-center">
       <div className="hidden desktop:block"></div>
@@ -24,9 +24,12 @@ function SubHeader() {
       </div>
       <div className="desktop:w-full flex justify-end items-center gap-[10px] h-fit">
         <HeartIcon width={24} specialClass="cursor-pointer fill-none" />
-        <Link to="/profile">
-          <ProfileIcon width={24} specialClass="cursor-pointer fill-none" />
-        </Link>
+        {accessToken && (
+          <Link to="/profile">
+            <ProfileIcon width={24} specialClass="cursor-pointer fill-none" />
+          </Link>
+        )}
+
         <div
           onClick={() => setBasketOpen(true)}
           className="relative flex cursor-pointer"

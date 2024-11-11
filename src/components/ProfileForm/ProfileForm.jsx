@@ -1,13 +1,15 @@
 import { Button, Flex, Form, Input } from "antd";
 import React from "react";
 
-function ProfileForm() {
+function ProfileForm({ userData }) {
   const onFinish = (values) => {
     console.log("Success:", values);
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+
+  console.log(userData);
 
   return (
     <Form
@@ -37,7 +39,7 @@ function ProfileForm() {
         >
           <Input
             className="py-4 px-[18px] mt-[2px] h-12"
-            placeholder="Enter your email"
+            placeholder={userData?.userName}
           />
         </Form.Item>
 
@@ -57,7 +59,7 @@ function ProfileForm() {
         >
           <Input
             className="py-4 px-[18px] mt-[2px] h-12"
-            placeholder="Enter your email"
+            placeholder={userData?.email}
           />
         </Form.Item>
       </Flex>

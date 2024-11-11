@@ -77,10 +77,11 @@ function Header({ isLogged, setIsLogged }) {
             Authorization: `Bearer ${accessToken}`,
           },
         })
-        .then((res) => setUserData(res.data.data));
-      setIsLogged(true);
-    } else {
-      setIsLogged(false);
+        .then((res) => setUserData(res.data.data))
+        .catch((err) => {
+          toast.error(err);
+          console.log(err);
+        });
     }
   }, [accessToken]);
 
@@ -114,7 +115,7 @@ function Header({ isLogged, setIsLogged }) {
           </Flex>
         </nav>
         <Flex className="hidden desktop:flex" align="center">
-          {isLogged ? (
+          {accessToken ? (
             <>
               <Flex className="gap-6" align="center">
                 <Button className="p-0 border-none shadow-none">

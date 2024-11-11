@@ -1,6 +1,7 @@
 import Header from "./components/Header/Header";
 import "./assets/tailwind.css";
 import "./assets/style.css";
+import "./assets/loader.css";
 import SubHeader from "./components/SubHeader/SubHeader";
 import { Route, Routes, useLocation } from "react-router-dom";
 import Home from "./pages/Home/Home";
@@ -14,27 +15,38 @@ import Profile from "./pages/Profile/Profile";
 import Cart from "./pages/Cart/Cart";
 import Payment from "./pages/Payment/Payment";
 import Error from "./pages/Error/Error";
-import toast, { Toaster } from "react-hot-toast";
-import OrderToast from "./components/OrderToast/OrderToast";
-
+import { Toaster } from "react-hot-toast";
+import PageLoader from "./components/PageLoader/PageLoader";
 function App() {
   const location = useLocation();
   const [isLogged, setIsLogged] = useState(false);
   const [activateLayout, setActivateLayout] = useState(false);
+  const [isoaderActive, setIsLoaderActive] = useState(false);
   useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    setIsLoaderActive(true);
+    document.body.style.overflow = "hidden";
+    const loaderTimer = setTimeout(() => {
+      setIsLoaderActive(false);
+      document.body.style.overflow = "initial";
+    }, 1500);
+
     if (location.pathname === "/login" || location.pathname === "/register") {
       setActivateLayout(false);
     } else {
       setActivateLayout(true);
     }
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    return () => {
+      clearTimeout(loaderTimer);
+    };
   }, [location.pathname]);
 
   return (
     <>
+      {isoaderActive && <PageLoader />}
       <Toaster
         toastOptions={{
           duration: 2000,
