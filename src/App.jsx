@@ -34,7 +34,11 @@ function App() {
       document.body.style.overflow = "auto";
     }, 1500);
 
-    if (location.pathname === "/login" || location.pathname === "/register") {
+    if (
+      location.pathname === "/login" ||
+      location.pathname === "/register" ||
+      location.pathname === "/reset-password"
+    ) {
       setActivateLayout(false);
     } else {
       setActivateLayout(true);
@@ -75,6 +79,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Auth />} />
         <Route path="/register" element={<Auth />} />
+        <Route path="/reset-password" element={<Auth />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/detail/:id" element={<Detail />} />

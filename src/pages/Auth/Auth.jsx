@@ -7,6 +7,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 import RegisterForm from "../../components/RegisterForm/RegisterForm";
+import ResetPasswordForm from "../../components/ResetPasswordForm/ResetPasswordForm";
 
 function Auth() {
   const location = useLocation();
@@ -52,33 +53,40 @@ function Auth() {
         <div className="custom-clipPath bg-skyBlue-400 h-screen hidden desktop:flex items-center">
           <img className="w-[500px] h-[500px]" src={siteLogo} alt="" />
         </div>
-        <div className="block desktop:hidden">
-          <div className="grid grid-cols-2 place-items-center h-11">
-            {menu.map((menuItem, index) => (
-              <Link
-                onClick={() => setCurrentMenu(menuItem.value)}
-                key={index}
-                className="w-full text-center"
-                to={menuItem.value}
-              >
-                <span
-                  className={`w-full flex justify-center cursor-pointer pb-2 border-b duration-300 ${
-                    currentMenu === menuItem.value
-                      ? "font-medium border-skyBlue-500"
-                      : "font-normal"
-                  }`}
+        {!currentMenu.includes("/reset-password") && (
+          <div className="block desktop:hidden">
+            <div className="grid grid-cols-2 place-items-center h-11">
+              {menu.map((menuItem, index) => (
+                <Link
+                  onClick={() => setCurrentMenu(menuItem.value)}
+                  key={index}
+                  className="w-full text-center"
+                  to={menuItem.value}
                 >
-                  {menuItem.label}
-                </span>
-              </Link>
-            ))}
+                  <span
+                    className={`w-full flex justify-center cursor-pointer pb-2 border-b duration-300 ${
+                      currentMenu === menuItem.value
+                        ? "font-medium border-skyBlue-500"
+                        : "font-normal"
+                    }`}
+                  >
+                    {menuItem.label}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
         <div className="flex items-center justify-center desktop:justify-start px-0 desktop:px-10 pt-[17px] desktop:p-10">
           {currentForm === "/login" && currentMenu === "/login" ? (
             <LoginForm />
-          ) : (
+          ) : currentForm === "/register" && currentMenu === "/register" ? (
             <RegisterForm />
+          ) : currentForm === "/reset-password" ? (
+            <ResetPasswordForm />
+          ) : (
+            ""
           )}
         </div>
       </section>

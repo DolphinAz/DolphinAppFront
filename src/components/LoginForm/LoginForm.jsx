@@ -12,6 +12,7 @@ import { useForm } from "antd/es/form/Form";
 function LoginForm() {
   const loginUrl = "/api/identity/login";
   const confirmEmailUrl = "/api/auth/confirm-email";
+  const resetPasswordUrl = "/api/auth/reset-password";
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
   const userId = urlParams.get("UserId");
@@ -140,14 +141,14 @@ function LoginForm() {
             </Checkbox>
           </Form.Item>
           <Link
-            to="/forgot-password"
+            to="/reset-password"
+            onClick={() => setIsResetActive(true)}
             className="desktop:text-gray-700 desktop:text-sm text-[12px] text-skyBlue-500 underline desktop:no-underline"
           >
             Şifrəmi unutdum
           </Link>
         </Flex>
       </Flex>
-
       <Flex vertical>
         <Form.Item className="mb-[11px]">
           <Button
