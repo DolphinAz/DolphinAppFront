@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import siteLogo from "../../assets/images/site-logo.png";
 import { Link, useNavigate } from "react-router-dom";
-import { Button, Dropdown, Flex } from "antd";
+import { Button, Dropdown, Flex, Skeleton } from "antd";
 import { Sling as Hamburger } from "hamburger-react";
 import NotificationIcon from "../../assets/icons/NotificationIcon";
 import axios from "axios";
@@ -117,26 +117,35 @@ function Header({ isLogged, setIsLogged }) {
         <Flex className="hidden desktop:flex" align="center">
           {accessToken ? (
             <>
-              <Flex className="gap-6" align="center">
-                <Button className="p-0 border-none shadow-none">
-                  <NotificationIcon />
-                </Button>
+              {userData ? (
+                <Flex className="gap-6" align="center">
+                  <Button className="p-0 border-none shadow-none">
+                    <NotificationIcon />
+                  </Button>
 
-                <Dropdown
-                  menu={{
-                    items,
-                  }}
-                >
-                  <a onClick={(e) => e.preventDefault()}>
-                    <Button
-                      className="py-[12px] h-fit px-[30px] font-medium text-sm bg-skyBlue-500 border-0 shadow-none"
-                      type="primary"
-                    >
-                      {userData?.name}
-                    </Button>
-                  </a>
-                </Dropdown>
-              </Flex>
+                  <Dropdown
+                    menu={{
+                      items,
+                    }}
+                  >
+                    <a onClick={(e) => e.preventDefault()}>
+                      <Button
+                        className="py-[12px] h-fit px-[30px] font-medium text-sm bg-skyBlue-500 border-0 shadow-none"
+                        type="primary"
+                      >
+                        {userData?.name}
+                      </Button>
+                    </a>
+                  </Dropdown>
+                </Flex>
+              ) : (
+                <Skeleton.Button
+                  className="rounded-[4px]"
+                  style={{ width: 200 }}
+                  size={40}
+                  active={true}
+                />
+              )}
             </>
           ) : (
             <>

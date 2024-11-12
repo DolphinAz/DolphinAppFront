@@ -3,13 +3,14 @@ import HeartIcon from "../../assets/icons/HeartIcon";
 import ProfileIcon from "../../assets/icons/ProfileIcon";
 import BasketIcon from "../../assets/icons/BasketIcon";
 import SearchIcon from "../../assets/icons/SearchIcon";
-import { Button, Input } from "antd";
+import { Badge, Button, Input } from "antd";
 import BasketSidebar from "../BasketSidebar/BasketSidebar";
 import { Link } from "react-router-dom";
 
 function SubHeader() {
   const [basketOpen, setBasketOpen] = useState(false);
   const accessToken = localStorage.getItem("accessToken");
+
   return (
     <div className="flex gap-5 desktop:grid desktop:grid-cols-3 desktop:gap-0 pt-5 px-5 pb-2 desktop:px-10 place-items-center">
       <div className="hidden desktop:block"></div>
@@ -35,14 +36,13 @@ function SubHeader() {
           className="relative flex cursor-pointer"
         >
           <Button className="p-0 border-none shadow-none">
-            <BasketIcon
-              width={24}
-              specialClass={"cursor-pointer fill-black-100"}
-            />
+            <Badge count={11} overflowCount={10} color="#0B84BC">
+              <BasketIcon
+                width={24}
+                specialClass={"cursor-pointer fill-black-100"}
+              />
+            </Badge>
           </Button>
-          <span className="absolute flex justify-center items-center -top-1 -right-2 bg-skyBlue-500 p-1 w-5 h-5 rounded-full text-white text-sm">
-            20
-          </span>
         </div>
       </div>
       <BasketSidebar basketOpen={basketOpen} setBasketOpen={setBasketOpen} />

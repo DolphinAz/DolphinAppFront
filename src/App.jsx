@@ -31,7 +31,7 @@ function App() {
     document.body.style.overflow = "hidden";
     const loaderTimer = setTimeout(() => {
       setIsLoaderActive(false);
-      document.body.style.overflow = "initial";
+      document.body.style.overflow = "auto";
     }, 1500);
 
     if (location.pathname === "/login" || location.pathname === "/register") {
@@ -51,7 +51,6 @@ function App() {
         toastOptions={{
           duration: 2000,
           style: {
-            // backgroundColor: "#FFFAE6",
             borderRadius: 10,
             padding: 16,
             position: "relative",

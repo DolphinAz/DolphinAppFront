@@ -1,7 +1,7 @@
 import { Button, Checkbox, Flex, Form, Input } from "antd";
 import axios from "axios";
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { baseUrl } from "../../constants/baseUrl";
 import { LoadingOutlined } from "@ant-design/icons";
 import toast from "react-hot-toast";
@@ -11,6 +11,12 @@ import { useForm } from "antd/es/form/Form";
 
 function LoginForm() {
   const loginUrl = "/api/identity/login";
+  const confirmEmailUrl = "/api/auth/confirm-email";
+  const location = useLocation();
+  const urlParams = new URLSearchParams(location.search);
+  const userId = urlParams.get("UserId");
+  const confirmToken = urlParams.get("Token");
+
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const navigate = useNavigate();
   const [form] = useForm();
@@ -19,6 +25,25 @@ function LoginForm() {
     validationSchema: loginUserSchema,
   });
 
+  useEffect(() => {
+    if (confirmToken) {
+      try {
+        axios
+          .get(
+            `${
+              baseUrl + confirmEmailUrl
+            }?UserId=${userId}&Token=${confirmToken}`
+          )
+          .then((res) => {
+            toast.success(res.data.message);
+            navigate("/login");
+          })
+          .catch((err) => toast.error(err.message));
+      } catch (error) {
+        toast.error(error);
+      }
+    }
+  }, []);
   const onFinish = (values) => {
     const isInputEmpty = Object.values(values).every(
       (item) => item !== undefined
