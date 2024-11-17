@@ -16,7 +16,14 @@ function RegisterForm() {
   const [form] = useForm();
 
   const { values, errors, handleChange } = useFormik({
-    initialValues: {},
+    initialValues: {
+      name: "",
+      surname: "",
+      email: "",
+      userName: "",
+      password: "",
+      confirmedPassword: "",
+    },
     validationSchema: registeredUserSchema,
   });
 
@@ -55,7 +62,7 @@ function RegisterForm() {
   return (
     <Form
       form={form}
-      className="desktop:max-w-[404px] w-full flex flex-col gap-9"
+      className="desktop:max-w-[404px] w-full flex flex-col gap-5"
       name="basic"
       layout="vertical"
       initialValues={values}
@@ -64,9 +71,11 @@ function RegisterForm() {
       onFinishFailed={onFinishFailed}
       autoComplete="off"
     >
-      <Flex vertical className="gap-[30px]">
+      <Flex vertical className="gap-4">
         <div className="flex flex-col gap-[30px] desktop:grid desktop:grid-cols-2 desktop:gap-3">
           <Form.Item
+            validateStatus={errors.name && "error"}
+            help={<p className="mt-1 text-sm">{errors.name}</p>}
             className="m-0"
             label={
               <p className="desktop:font-medium text-sm desktop:text-lg">Ad</p>
@@ -81,12 +90,11 @@ function RegisterForm() {
                 }}
                 className="bg-skyBlue-100 border-none h-[50px] px-3 focus:bg-skyBlue-100 hover:bg-skyBlue-100"
               />
-              {errors.name && (
-                <p className="text-red-100 text-xs">{errors.name}</p>
-              )}
             </div>
           </Form.Item>
           <Form.Item
+            validateStatus={errors.surname && "error"}
+            help={<p className="mt-1 text-sm">{errors.surname}</p>}
             className="m-0"
             label={
               <p className="desktop:font-medium text-sm desktop:text-lg">
@@ -103,14 +111,13 @@ function RegisterForm() {
                 }}
                 className="bg-skyBlue-100 border-none h-[50px] px-3 focus:bg-skyBlue-100 hover:bg-skyBlue-100"
               />
-              {errors.surname && (
-                <p className="text-red-100 text-xs">{errors.surname}</p>
-              )}
             </div>
           </Form.Item>
         </div>
         <div className="flex flex-col gap-[30px] desktop:grid desktop:grid-cols-2 desktop:gap-3">
           <Form.Item
+            validateStatus={errors.email && "error"}
+            help={<p className="mt-1 text-sm">{errors.email}</p>}
             className="m-0"
             label={
               <p className="desktop:font-medium text-sm desktop:text-lg">
@@ -127,13 +134,12 @@ function RegisterForm() {
                 }}
                 className="bg-skyBlue-100 border-none h-[50px] px-3 focus:bg-skyBlue-100 hover:bg-skyBlue-100"
               />
-              {errors.email && (
-                <p className="text-red-100 text-xs">{errors.email}</p>
-              )}
             </div>
           </Form.Item>
 
           <Form.Item
+            validateStatus={errors.userName && "error"}
+            help={<p className="mt-1 text-sm">{errors.userName}</p>}
             className="m-0"
             label={
               <p className="desktop:font-medium text-sm desktop:text-lg">
@@ -150,14 +156,13 @@ function RegisterForm() {
                 }}
                 className="bg-skyBlue-100 border-none h-[50px] px-3 focus:bg-skyBlue-100 hover:bg-skyBlue-100"
               />
-              {errors.userName && (
-                <p className="text-red-100 text-xs">{errors.userName}</p>
-              )}
             </div>
           </Form.Item>
         </div>
         <div className="flex flex-col gap-[30px] desktop:grid desktop:grid-cols-2 desktop:gap-3">
           <Form.Item
+            validateStatus={errors.password && "error"}
+            help={<p className="mt-1 text-sm">{errors.password}</p>}
             className="m-0"
             label={
               <p className="desktop:font-medium text-sm desktop:text-lg">
@@ -174,12 +179,11 @@ function RegisterForm() {
                 }}
                 className="bg-skyBlue-100 border-none h-[50px] px-3 focus:bg-skyBlue-100 hover:bg-skyBlue-100 target:bg-skyBlue-100"
               />
-              {errors.password && (
-                <p className="text-red-100 text-xs">{errors.password}</p>
-              )}
             </div>
           </Form.Item>
           <Form.Item
+            validateStatus={errors.confirmedPassword && "error"}
+            help={<p className="mt-1 text-sm">{errors.confirmedPassword}</p>}
             className="m-0"
             label={
               <p className="desktop:font-medium text-sm desktop:text-lg">
@@ -196,11 +200,6 @@ function RegisterForm() {
                 name="confirmedPassword"
                 className="bg-skyBlue-100 border-none h-[50px] px-3 focus:bg-skyBlue-100 hover:bg-skyBlue-100 target:bg-skyBlue-100"
               />
-              {errors.confirmedPassword && (
-                <p className="text-red-100 text-xs">
-                  {errors.confirmedPassword}
-                </p>
-              )}
             </div>
           </Form.Item>
         </div>
@@ -215,10 +214,10 @@ function RegisterForm() {
             htmlType="submit"
           >
             {buttonDisabled ? (
-              <Flex align="center" gap={10}>
+              <span className="flex items-center gap-[10px]">
                 <LoadingOutlined />
                 Gözləyin
-              </Flex>
+              </span>
             ) : (
               "Qeydiyyat"
             )}

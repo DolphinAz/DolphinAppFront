@@ -1,7 +1,7 @@
 import { LoadingOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, Input } from "antd";
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { resetLinkSchema } from "../../validations/resetLink.validation";
 import { useForm } from "antd/es/form/Form";
 import toast from "react-hot-toast";
@@ -20,13 +20,12 @@ function PasswordUpdateForm() {
   const resetToken = urlParams.get("token");
   const userId = urlParams.get("userId");
   const { values, errors, handleChange } = useFormik({
-    initialValues: {},
+    initialValues: { newPassword: "", confirmedNewPassword: "" },
     validationSchema: resetPasswordSchema,
   });
+
   const onFinish = (values) => {
-    const isInputEmpty = Object.values(values).every(
-      (item) => item !== undefined
-    );
+    const isInputEmpty = Object.values(values).every((item) => item !== "");
 
     if (Object.keys(errors).length === 0 && isInputEmpty) {
       setButtonDisabled(true);
@@ -42,17 +41,16 @@ function PasswordUpdateForm() {
             navigate("/login");
             console.log(res.data);
           })
-          .catch((err) => console.log(err))
+          .catch((err) => toast.error(err.message))
           .finally(() => setButtonDisabled(false));
       } catch (error) {
         toast.error(error);
       }
+    } else {
+      toast.error("Please fill all inputs!");
     }
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
   return (
     <Form
       form={form}
@@ -61,11 +59,14 @@ function PasswordUpdateForm() {
       initialValues={values}
       onChange={handleChange}
       onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
+      onFinishFailed={() => toast.error("Submission was failed!")}
       autoComplete="off"
+      className="flex flex-col gap-3"
     >
       <Flex vertical>
         <Form.Item
+          validateStatus={errors.newPassword && "error"}
+          help={<p className="mt-1 text-sm">{errors.newPassword}</p>}
           label={
             <p className="desktop:font-medium text-sm desktop:text-lg">
               Yeni şifrə
@@ -81,13 +82,12 @@ function PasswordUpdateForm() {
               }}
               className="bg-skyBlue-100 border-none h-[50px] px-3 focus:bg-skyBlue-100 hover:bg-skyBlue-100"
             />
-            {errors.newPassword && (
-              <p className="text-red-100 text-xs">{errors.newPassword}</p>
-            )}
           </div>
         </Form.Item>
 
         <Form.Item
+          validateStatus={errors.confirmedNewPassword && "error"}
+          help={<p className="mt-1 text-sm">{errors.confirmedNewPassword}</p>}
           label={
             <p className="desktop:font-medium text-sm desktop:text-lg">
               Yeni şifrəni təkrarla
@@ -103,17 +103,11 @@ function PasswordUpdateForm() {
               }}
               className="bg-skyBlue-100 border-none h-[50px] px-3 focus:bg-skyBlue-100 hover:bg-skyBlue-100 target:bg-skyBlue-100"
             />
-
-            {errors.confirmedNewPassword && (
-              <p className="text-red-100 text-xs">
-                {errors.confirmedNewPassword}
-              </p>
-            )}
           </div>
         </Form.Item>
       </Flex>
       <Flex vertical>
-        <Form.Item className="mb-[11px]">
+        <Form.Item>
           <Button
             disabled={buttonDisabled}
             className="rounded-lg w-full py-[11px] h-[58px] text-lg desktop:text-2xl font-medium border-skyBlue-500 text-skyBlue-500 desktop:text-white bg-transparent desktop:bg-skyBlue-500"
@@ -121,10 +115,10 @@ function PasswordUpdateForm() {
             htmlType="submit"
           >
             {buttonDisabled ? (
-              <Flex align="center" gap={10}>
+              <span className="flex items-center gap-[10px]">
                 <LoadingOutlined />
                 Gözləyin
-              </Flex>
+              </span>
             ) : (
               "Şifrəni yenilə"
             )}

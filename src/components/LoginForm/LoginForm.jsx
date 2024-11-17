@@ -12,7 +12,6 @@ import { useForm } from "antd/es/form/Form";
 function LoginForm() {
   const loginUrl = "/api/identity/login";
   const confirmEmailUrl = "/api/auth/confirm-email";
-  const resetPasswordUrl = "/api/auth/reset-password";
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
   const userId = urlParams.get("UserId");
@@ -22,7 +21,7 @@ function LoginForm() {
   const navigate = useNavigate();
   const [form] = useForm();
   const { values, errors, handleChange } = useFormik({
-    initialValues: {},
+    initialValues: { emailorUserName: "", password: "" },
     validationSchema: loginUserSchema,
   });
 
@@ -46,9 +45,7 @@ function LoginForm() {
     }
   }, []);
   const onFinish = (values) => {
-    const isInputEmpty = Object.values(values).every(
-      (item) => item !== undefined
-    );
+    const isInputEmpty = Object.values(values).every((item) => item !== "");
 
     if (Object.keys(errors).length === 0 && isInputEmpty) {
       try {
@@ -81,7 +78,7 @@ function LoginForm() {
   return (
     <Form
       form={form}
-      className="desktop:max-w-[404px] w-full flex flex-col gap-9"
+      className="desktop:max-w-[404px] w-full flex flex-col gap-3"
       name="basic"
       layout="vertical"
       initialValues={values}
@@ -92,9 +89,11 @@ function LoginForm() {
     >
       <Flex vertical>
         <Form.Item
+          validateStatus={errors.emailorUserName && "error"}
+          help={<p className="mt-1 text-sm">{errors.emailorUserName}</p>}
           label={
             <p className="desktop:font-medium text-sm desktop:text-lg">
-              E-mail
+              E-mail or username
             </p>
           }
           name="emailorUserName"
@@ -107,13 +106,12 @@ function LoginForm() {
               }}
               className="bg-skyBlue-100 border-none h-[50px] px-3 focus:bg-skyBlue-100 hover:bg-skyBlue-100"
             />
-            {errors.emailorUserName && (
-              <p className="text-red-100 text-xs">{errors.emailorUserName}</p>
-            )}
           </div>
         </Form.Item>
 
         <Form.Item
+          validateStatus={errors.password && "error"}
+          help={<p className="mt-1 text-sm">{errors.password}</p>}
           label={
             <p className="desktop:font-medium text-sm desktop:text-lg">Şifrə</p>
           }
@@ -127,10 +125,6 @@ function LoginForm() {
               }}
               className="bg-skyBlue-100 border-none h-[50px] px-3 focus:bg-skyBlue-100 hover:bg-skyBlue-100 target:bg-skyBlue-100"
             />
-
-            {errors.password && (
-              <p className="text-red-100 text-xs">{errors.password}</p>
-            )}
           </div>
         </Form.Item>
 
@@ -149,8 +143,8 @@ function LoginForm() {
           </Link>
         </Flex>
       </Flex>
-      <Flex vertical>
-        <Form.Item className="mb-[11px]">
+      <Flex vertical gap={10}>
+        <Form.Item className="m-0">
           <Button
             disabled={buttonDisabled}
             className="rounded-lg w-full py-[11px] h-[58px] text-lg desktop:text-2xl font-medium border-skyBlue-500 text-skyBlue-500 desktop:text-white bg-transparent desktop:bg-skyBlue-500"
@@ -158,10 +152,10 @@ function LoginForm() {
             htmlType="submit"
           >
             {buttonDisabled ? (
-              <Flex align="center" gap={10}>
+              <span className="flex items-center gap-[10px]">
                 <LoadingOutlined />
                 Gözləyin
-              </Flex>
+              </span>
             ) : (
               "Giriş"
             )}
