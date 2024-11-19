@@ -6,8 +6,15 @@ import {
 import { Menu } from "antd";
 import React from "react";
 import siteLogo from "../../../assets/images/dolphin-logo.png";
+import Dashboard from "../../sections/Dashboard/Dashboard";
+import Users from "../../sections/Users/Users";
 
-function Sidebar({ collapsed, setCollapsed, setActiveSection }) {
+function Sidebar({ menuItems, collapsed, setCollapsed, setActiveSection }) {
+  const handleMenuClick = (e) => {
+    const selectedItem = menuItems.find((item) => item.key === e.key);
+    setActiveSection(selectedItem.label);
+  };
+
   return (
     <aside
       onClick={() => setCollapsed(!collapsed)}
@@ -35,23 +42,8 @@ function Sidebar({ collapsed, setCollapsed, setActiveSection }) {
           style={{ borderInlineEnd: "none" }}
           mode="inline"
           defaultSelectedKeys={["1"]}
-          items={[
-            {
-              key: "1",
-              icon: <ProductOutlined />,
-              label: "Panelim",
-            },
-            {
-              key: "2",
-              icon: <UserOutlined />,
-              label: "İstifadəçilər",
-            },
-            {
-              key: "3",
-              icon: <ShoppingOutlined />,
-              label: "Məhsullar",
-            },
-          ]}
+          items={menuItems}
+          onClick={handleMenuClick}
         />
       </div>
     </aside>

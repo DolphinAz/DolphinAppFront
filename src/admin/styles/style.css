@@ -21,8 +21,6 @@
   white-space: nowrap; /* Prevent cell data from wrapping */
 }
 
-.custom-column {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.sortable-table {
+  cursor: pointer;
 }
