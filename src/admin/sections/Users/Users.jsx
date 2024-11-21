@@ -1,40 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { Button, Space, Table, Tag } from "antd";
 import { CaretDownOutlined, CaretUpOutlined } from "@ant-design/icons";
+import axios from "axios";
+import { baseUrl } from "../../../constants/baseUrl";
+import toast from "react-hot-toast";
 
 function Users() {
-  const [users, setUsers] = useState([
-    {
-      key: 1,
-      firstName: "John",
-      lastName: "Brown",
-      email: "coqyze@mailinator.com",
-      status: "verified",
-    },
-    {
-      key: 2,
-      firstName: "Jim",
-      lastName: "Green",
-      email: "tujetutic@mailinator.com",
-      status: "unverified",
-    },
-    {
-      key: 3,
-      firstName: "Joe",
-      lastName: "Black",
-      email: "golaz@yahoo.com",
-      status: "verified",
-    },
-  ]);
-
-  const [sortedData, setSortedData] = useState(users);
+  const usersUrl = "/api/admin/users/get";
+  const [users, setUsers] = useState([]); // Data for the table
   const [sortOrder, setSortOrder] = useState("ascend");
-  const [tableParams, setTableParams] = useState({
-    pagination: {
-      current: 1,
-      pageSize: 10,
-    },
-  });
+
+  useEffect(() => {
+    axios
+      .get(baseUrl + usersUrl)
+      .then((res) => {
+        const result = res.data.data.map((user, index) => ({
+          key: index + 1,
+          name: user.name,
+          lastName: user.surname,
+          email: user.email,
+          status: user.isActive ? "active" : "inactive",
+        }));
+        setUsers(result);
+      })
+      .catch((err) => toast.error(err.message));
+  }, []);
+
   const handleSort = () => {
     const newSortOrder = sortOrder === "ascend" ? "descend" : "ascend"; // Toggle sort order
     setSortOrder(newSortOrder);
@@ -42,7 +33,7 @@ function Users() {
     const sorted = [...users].sort((a, b) => {
       return newSortOrder === "ascend" ? a.key - b.key : b.key - a.key;
     });
-    setSortedData(sorted);
+    setUsers(sorted);
   };
 
   const columns = [
@@ -54,7 +45,6 @@ function Users() {
         </div>
       ),
       dataIndex: "key",
-      rowScope: "row",
       width: "80px",
       onHeaderCell: () => ({
         onClick: handleSort,
@@ -63,7 +53,7 @@ function Users() {
     },
     {
       title: "Name",
-      dataIndex: "firstName",
+      dataIndex: "name",
     },
     {
       title: "Surname",
@@ -77,19 +67,18 @@ function Users() {
       title: "Status",
       dataIndex: "status",
       render: (status) => (
-        <Tag color={status === "verified" ? "green" : "volcano"}>
+        <Tag color={status === "active" ? "green" : "volcano"}>
           {status.toUpperCase()}
         </Tag>
       ),
       filters: [
-        { text: "Verified", value: "verified" },
-        { text: "Unverified", value: "unverified" },
+        { text: "Active", value: "active" },
+        { text: "Inactive", value: "inactive" },
       ],
       onFilter: (value, record) => record.status === value,
     },
     {
       title: "Action",
-      dataIndex: "action",
       render: () => (
         <Space size="middle">
           <Button className="bg-red-100 text-white border-transparent hover:!text-red-100 hover:!border-red-100">
@@ -102,19 +91,11 @@ function Users() {
 
   return (
     <Table
-      dataSource={sortedData}
+      dataSource={users}
       columns={columns}
       className={`overflow-x-auto w-full no-tooltip-table`}
       scroll={{ x: 600 }}
-      pagination={tableParams.pagination}
-    >
-      <Table.Column dataIndex="key" key="key" />
-      <Table.Column dataIndex="firstName" key="firstName" />
-      <Table.Column dataIndex="lastName" key="lastName" />
-      <Table.Column dataIndex="email" key="email" />
-      <Table.Column dataIndex="status" key="status" />
-      <Table.Column title="Action" key="action" />
-    </Table>
+    />
   );
 }
 

@@ -18,6 +18,7 @@ import Error from "./pages/Error/Error";
 import { Toaster } from "react-hot-toast";
 import PageLoader from "./components/PageLoader/PageLoader";
 import Admin from "./pages/Admin/Admin";
+
 function App() {
   const location = useLocation();
   const [isLogged, setIsLogged] = useState(false);
@@ -78,6 +79,7 @@ function App() {
         ""
       )}
       <Routes>
+        {/*---- USER ROUTES ----*/}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Auth />} />
         <Route path="/register" element={<Auth />} />
@@ -88,8 +90,10 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/payment" element={<Payment />} />
-        <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<Error />} />
+
+        {/*---- ADMIN ROUTES ----*/}
+        <Route path="/admin" element={<Admin />} />
       </Routes>
       {activateLayout ? <Footer /> : ""}
     </>

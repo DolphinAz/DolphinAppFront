@@ -14,13 +14,54 @@
 }
 
 .ant-table-thead > tr > th {
-  white-space: nowrap; /* Prevent column headers from wrapping */
+  white-space: nowrap;
 }
 
 .ant-table-cell {
-  white-space: nowrap; /* Prevent cell data from wrapping */
+  white-space: nowrap;
 }
 
 .sortable-table {
   cursor: pointer;
+}
+
+.admin-form input,
+textarea {
+  background-color: #f8fafb !important;
+}
+
+.create-book-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 0.5fr 0.5fr;
+  gap: 20px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "first first second"
+    "fifth third third"
+    "fifth fourth fourth"
+    "span span sixth";
+  .first {
+    grid-area: first;
+  }
+
+  .second {
+    grid-area: second;
+  }
+
+  .third {
+    grid-area: third;
+  }
+
+  .fourth {
+    grid-area: fourth;
+  }
+
+  .fifth {
+    grid-area: fifth;
+  }
+
+  .sixth {
+    grid-area: sixth;
+  }
 }

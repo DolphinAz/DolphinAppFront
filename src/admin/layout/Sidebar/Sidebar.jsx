@@ -1,18 +1,11 @@
-import {
-  ProductOutlined,
-  ShoppingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
 import { Menu } from "antd";
 import React from "react";
 import siteLogo from "../../../assets/images/dolphin-logo.png";
-import Dashboard from "../../sections/Dashboard/Dashboard";
-import Users from "../../sections/Users/Users";
 
 function Sidebar({ menuItems, collapsed, setCollapsed, setActiveSection }) {
   const handleMenuClick = (e) => {
     const selectedItem = menuItems.find((item) => item.key === e.key);
-    setActiveSection(selectedItem.label);
+    setActiveSection(selectedItem.view);
   };
 
   return (
@@ -41,7 +34,7 @@ function Sidebar({ menuItems, collapsed, setCollapsed, setActiveSection }) {
           className="w-11/12 mx-auto"
           style={{ borderInlineEnd: "none" }}
           mode="inline"
-          defaultSelectedKeys={["1"]}
+          defaultSelectedKeys={["2"]}
           items={menuItems}
           onClick={handleMenuClick}
         />
