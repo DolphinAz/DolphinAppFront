@@ -5,19 +5,14 @@ import Dashboard from "../../admin/sections/Dashboard/Dashboard";
 import Sidebar from "../../admin/layout/Sidebar/Sidebar";
 import AdminHeader from "../../admin/layout/AdminHeader/AdminHeader";
 import Users from "../../admin/sections/Users/Users";
-import {
-  BookFilled,
-  BookOutlined,
-  ProductOutlined,
-  ShoppingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { BookOutlined, ProductOutlined, UserOutlined } from "@ant-design/icons";
 import Books from "../../admin/sections/Books/Books";
 import CreateBook from "../../admin/crud/create/CreateBook/CreateBook";
 
 function Admin() {
   const [collapsed, setCollapsed] = useState(true);
-  const [activeSection, setActiveSection] = useState(<CreateBook />);
+  const [activeSection, setActiveSection] = useState(<Dashboard />);
+
   const menuItems = [
     {
       key: "1",
@@ -60,6 +55,10 @@ function Admin() {
           className="p-[30px] bg-gray-1000  flex flex-col gap-5 "
         >
           {activeSection}
+          {menuItems.map(
+            (item) =>
+              item.label.toLowerCase() === activeSection && activeSection
+          )}
         </main>
       </div>
     </Layout>

@@ -1,40 +1,32 @@
-import React, { useRef, useState } from "react";
-import { SearchOutlined } from "@ant-design/icons";
-import { Button, Flex, Form, Input, Modal, Space, Table } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { Button, Flex, Input, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
-import { Link } from "react-router-dom";
 import CreateBook from "../../crud/create/CreateBook/CreateBook";
-const data = [
-  {
-    key: "1",
-    bookName: "John Brown",
-    stockCount: 32,
-    purchasePrice: 32,
-    address: "New York No. 1 Lake Park",
-  },
-  {
-    key: "2",
-    bookName: "Joe Black",
-    stockCount: 42,
-    purchasePrice: 42,
-    address: "London No. 1 Lake Park",
-  },
-  {
-    key: "3",
-    bookName: "Jim Green",
-    stockCount: 32,
-    purchasePrice: 32,
-    address: "Sydney No. 1 Lake Park",
-  },
-  {
-    key: "4",
-    bookName: "Jim Red",
-    stockCount: 32,
-    purchasePrice: 32,
-    address: "London No. 2 Lake Park",
-  },
-];
+import axios from "axios";
+import { baseUrl } from "../../../constants/baseUrl";
+
 function Books({ setActiveSection }) {
+  const booksUrl = "/api/book/get";
+  const [books, setBooks] = useState([]);
+  useEffect(() => {
+    axios.get(baseUrl + booksUrl).then((res) => {
+      const result = res.data.data.map((book, index) => ({
+        key: index + 1,
+        bookImage: book.imageUrl,
+        bookName: book.name,
+        discountPrice: book.discountPrice,
+        purchasePrice: book.purchasePrice,
+        categories: book.categories,
+      }));
+      setBooks(result);
+    });
+  }, []);
+  const [sortOrder, setSortOrder] = useState("ascend");
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
@@ -47,6 +39,17 @@ function Books({ setActiveSection }) {
     clearFilters();
     setSearchText("");
   };
+
+  const handleSort = () => {
+    const newSortOrder = sortOrder === "ascend" ? "descend" : "ascend"; // Toggle sort order
+    setSortOrder(newSortOrder);
+
+    const sorted = [...books].sort((a, b) => {
+      return newSortOrder === "ascend" ? a.key - b.key : b.key - a.key;
+    });
+    setBooks(sorted);
+  };
+
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -138,7 +141,27 @@ function Books({ setActiveSection }) {
         text
       ),
   });
+
   const columns = [
+    {
+      title: (
+        <div className="flex items-center justify-between" onClick={handleSort}>
+          <span>#</span>
+          {sortOrder === "ascend" ? <CaretDownOutlined /> : <CaretUpOutlined />}
+        </div>
+      ),
+      dataIndex: "key",
+      width: "80px",
+      onHeaderCell: () => ({
+        onClick: handleSort,
+        className: "sortable-table",
+      }),
+    },
+    {
+      title: "Kitabın şəkili",
+      dataIndex: "bookImage",
+      render: (url) => <img src={url} />,
+    },
     {
       title: "Kitab adı",
       dataIndex: "bookName",
@@ -147,9 +170,9 @@ function Books({ setActiveSection }) {
       ...getColumnSearchProps("bookName"),
     },
     {
-      title: "Stok",
-      dataIndex: "stockCount",
-      key: "stockCount",
+      title: "Endirim",
+      dataIndex: "discountPrice",
+      key: "discountPrice",
       width: "20%",
     },
     {
@@ -158,16 +181,34 @@ function Books({ setActiveSection }) {
       key: "purchasePrice",
       width: "20%",
     },
+    {
+      title: "Kateqoriyalar",
+      dataIndex: "categories",
+      key: "categories",
+      width: "20%",
+      render: (categories) => (
+        <div className="flex gap-2">
+          {categories.map((category, index) => (
+            <span key={index} className="bg-gray-1050 p-1 px-2 rounded-full">
+              {category.name}
+            </span>
+          ))}
+        </div>
+      ),
+    },
   ];
+
   return (
     <Flex vertical gap={10}>
       <Button
-        onClick={() => setActiveSection(<CreateBook />)}
+        onClick={() =>
+          setActiveSection(<CreateBook setActiveSection={setActiveSection} />)
+        }
         className="w-fit ml-auto bg-skyBlue-500 text-white border-transparent"
       >
         Kitab əlavə et
       </Button>
-      <Table columns={columns} dataSource={data} />
+      <Table columns={columns} dataSource={books} />
     </Flex>
   );
 }
