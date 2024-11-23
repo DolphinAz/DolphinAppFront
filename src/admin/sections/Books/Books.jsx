@@ -201,9 +201,7 @@ function Books({ setActiveSection }) {
   return (
     <Flex vertical gap={10}>
       <Button
-        onClick={() =>
-          setActiveSection(<CreateBook setActiveSection={setActiveSection} />)
-        }
+        onClick={() => setActiveSection("create-book")}
         className="w-fit ml-auto bg-skyBlue-500 text-white border-transparent"
       >
         Kitab əlavə et

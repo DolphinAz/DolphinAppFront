@@ -334,9 +334,7 @@ function CreateBook({ setActiveSection }) {
         </Flex>
         <Flex className="sixth" gap={10}>
           <Button
-            onClick={() =>
-              setActiveSection(<Books setActiveSection={setActiveSection} />)
-            }
+            onClick={() => setActiveSection("books")}
             className="ml-auto bg-gray-700 text-white"
             type="submit"
           >

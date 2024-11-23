@@ -11,26 +11,45 @@ import CreateBook from "../../admin/crud/create/CreateBook/CreateBook";
 
 function Admin() {
   const [collapsed, setCollapsed] = useState(true);
-  const [activeSection, setActiveSection] = useState(<Dashboard />);
+  const [activeSection, setActiveSection] = useState("dashboard");
 
   const menuItems = [
     {
       key: "1",
       icon: <ProductOutlined />,
       label: "Panelim",
-      view: <Dashboard />,
+      value: "dashboard",
     },
     {
       key: "2",
       icon: <UserOutlined />,
       label: "İstifadəçilər",
-      view: <Users />,
+      value: "users",
     },
     {
       key: "3",
       icon: <BookOutlined />,
       label: "Kitablar",
+      value: "books",
+    },
+  ];
+
+  const sections = [
+    {
+      label: "dashboard",
+      view: <Dashboard />,
+    },
+    {
+      label: "users",
+      view: <Users />,
+    },
+    {
+      label: "books",
       view: <Books setActiveSection={setActiveSection} />,
+    },
+    {
+      label: "create-book",
+      view: <CreateBook setActiveSection={setActiveSection} />,
     },
   ];
 
@@ -54,10 +73,11 @@ function Admin() {
           }}
           className="p-[30px] bg-gray-1000  flex flex-col gap-5 "
         >
-          {activeSection}
-          {menuItems.map(
+          {sections.map(
             (item) =>
-              item.label.toLowerCase() === activeSection && activeSection
+              item.label.toLowerCase() === activeSection.toLowerCase() && (
+                <div key={item.label}>{item.view}</div>
+              )
           )}
         </main>
       </div>

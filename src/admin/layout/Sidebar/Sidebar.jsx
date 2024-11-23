@@ -5,7 +5,7 @@ import siteLogo from "../../../assets/images/dolphin-logo.png";
 function Sidebar({ menuItems, collapsed, setCollapsed, setActiveSection }) {
   const handleMenuClick = (e) => {
     const selectedItem = menuItems.find((item) => item.key === e.key);
-    setActiveSection(selectedItem.view);
+    setActiveSection(selectedItem.value);
   };
 
   return (
@@ -34,7 +34,7 @@ function Sidebar({ menuItems, collapsed, setCollapsed, setActiveSection }) {
           className="w-11/12 mx-auto"
           style={{ borderInlineEnd: "none" }}
           mode="inline"
-          defaultSelectedKeys={["2"]}
+          defaultSelectedKeys={["1"]}
           items={menuItems}
           onClick={handleMenuClick}
         />
