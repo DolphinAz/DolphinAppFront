@@ -26,7 +26,8 @@
 }
 
 .admin-form input,
-textarea {
+textarea,
+.ant-select-selector {
   background-color: #f8fafb !important;
 }
 

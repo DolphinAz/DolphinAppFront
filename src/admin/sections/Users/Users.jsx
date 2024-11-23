@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 
 function Users() {
   const usersUrl = "/api/admin/users/get";
-  const [users, setUsers] = useState([]); // Data for the table
+  const [users, setUsers] = useState([]);
   const [sortOrder, setSortOrder] = useState("ascend");
 
   useEffect(() => {
