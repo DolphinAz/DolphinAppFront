@@ -176,7 +176,7 @@ function CreateBook({ setActiveSection }) {
                   setImagePreview(URL.createObjectURL(e.target.files[0]));
                   setValues({ ...values, File: e.target.files[0] });
                 }}
-                className="t-0 left-0 absolute opacity-0"
+                className="t-0 left-0 absolute opacity-0 w-full"
               />
 
               {imagePreview ? (
@@ -197,7 +197,7 @@ function CreateBook({ setActiveSection }) {
           gap={20}
         >
           <h1 className="text-xl font-semibold">Kitabın detalları</h1>
-          <div className="grid grid-cols-4 gap-5">
+          <div className="flex flex-col desktop:grid desktop:grid-cols-4 gap-5">
             <Form.Item layout="vertical" label="Qiyməti" name="PurchasePrice">
               <InputNumber
                 onChange={(selectedValue) =>
@@ -242,7 +242,7 @@ function CreateBook({ setActiveSection }) {
           gap={20}
         >
           <h1 className="text-xl font-semibold">Digər</h1>
-          <div className="grid grid-cols-[1fr_1fr_2fr] gap-5">
+          <div className="flex flex-col desktop:grid desktop:grid-cols-[1fr_1fr_2fr] gap-5">
             <Form.Item layout="vertical" label="Məhşurdur?" name="IsFame">
               <Select
                 onChange={(selectedValue) =>
