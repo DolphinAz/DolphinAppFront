@@ -73,3 +73,12 @@ textarea,
     flex-direction: column;
   }
 }
+
+.table-scrollbar::-webkit-scrollbar {
+  height: 5px;
+  border-radius: 8px;
+}
+.table-scrollbar::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 8px;
+}
