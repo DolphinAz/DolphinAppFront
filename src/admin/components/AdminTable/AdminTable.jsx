@@ -24,51 +24,11 @@ function AdminTable({ data, columns }) {
                 key={index}
                 className="h-14 border-b duration-300 last:border-0 hover:bg-gray-100 text-xs font-medium"
               >
-                {Object.entries(book).map(([key, value], index) => {
-                  if (key === "categories") {
-                    return (
-                      <td key={index} className="text-center px-3">
-                        <Flex gap={5} justify="center">
-                          {value && value.length > 0 ? (
-                            value.map((elem, index) => (
-                              <span
-                                key={index}
-                                className="bg-gray-350 py-1 px-2 text-xs rounded-full text-nowrap"
-                              >
-                                {elem.name}
-                              </span>
-                            ))
-                          ) : (
-                            <span>-</span>
-                          )}
-                        </Flex>
-                      </td>
-                    );
-                  }
-                  return (
-                    <td key={index} className="text-center px-3">
-                      {key === "bookImage" ? (
-                        <span className="flex justify-center">
-                          <img
-                            className="w-[40px] h-[40px] object-cover rounded-lg"
-                            src={value}
-                            alt={book.bookName}
-                          />
-                        </span>
-                      ) : (
-                        value
-                      )}
-                    </td>
-                  );
-                })}
-
-                {columns[columns.length - 1]?.title && (
-                  <td className="text-center">
-                    <button className="bg-red-100 py-1 px-2 rounded-lg text-white">
-                      Delete
-                    </button>
+                {columns.map((column, colIndex) => (
+                  <td key={colIndex} className="text-center px-3">
+                    {column.render(book, index)}
                   </td>
-                )}
+                ))}
               </tr>
             ))}
           </tbody>

@@ -61,12 +61,11 @@ function CreateBook({ setActiveSection }) {
           })
           .then((res) => {
             console.log(res);
-            setActiveSection(<Books setActiveSection={setActiveSection} />);
+            setActiveSection("books");
             toast.success("Yeni kitab yaradıldı");
           })
           .catch((err) => {
             toast.error(err.response.data.message);
-            console.log("Erro");
           });
       } catch (error) {
         // toast.error(error);

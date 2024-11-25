@@ -1,17 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout } from "antd";
 import "../../admin/styles/style.css";
 import Dashboard from "../../admin/sections/Dashboard/Dashboard";
 import Sidebar from "../../admin/layout/Sidebar/Sidebar";
 import AdminHeader from "../../admin/layout/AdminHeader/AdminHeader";
 import Users from "../../admin/sections/Users/Users";
-import { BookOutlined, ProductOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  BookOutlined,
+  ProductOutlined,
+  TagOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import Books from "../../admin/sections/Books/Books";
 import CreateBook from "../../admin/crud/create/CreateBook/CreateBook";
+import Categories from "../../admin/sections/Categories/Categories";
+import CreateCategory from "../../admin/crud/create/CreateCategory/CreateCategory";
 
 function Admin() {
   const [collapsed, setCollapsed] = useState(true);
-  const [activeSection, setActiveSection] = useState("dashboard");
+  const [activeSection, setActiveSection] = useState("");
+  useEffect(() => {
+    setActiveSection(JSON.parse(localStorage.getItem("menu-item")));
+    console.log(activeSection);
+  }, []);
 
   const menuItems = [
     {
@@ -32,6 +43,12 @@ function Admin() {
       label: "Kitablar",
       value: "books",
     },
+    {
+      key: "4",
+      icon: <TagOutlined />,
+      label: "Kateqoriyalar",
+      value: "categories",
+    },
   ];
 
   const sections = [
@@ -51,11 +68,20 @@ function Admin() {
       label: "create-book",
       view: <CreateBook setActiveSection={setActiveSection} />,
     },
+    {
+      label: "categories",
+      view: <Categories setActiveSection={setActiveSection} />,
+    },
+    {
+      label: "create-category",
+      view: <CreateCategory setActiveSection={setActiveSection} />,
+    },
   ];
 
   return (
     <Layout className="min-h-screen bg-white">
       <Sidebar
+        activeSection={activeSection}
         menuItems={menuItems}
         setActiveSection={setActiveSection}
         collapsed={collapsed}

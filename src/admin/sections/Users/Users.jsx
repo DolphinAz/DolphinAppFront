@@ -29,21 +29,38 @@ function Users() {
   const columns = [
     {
       title: "No",
+      render: (_, index) => <span>{index + 1}</span>,
     },
     {
       title: "Name",
+      render: (user) => user.name,
     },
     {
       title: "Surname",
+      render: (user) => user.lastName,
     },
     {
       title: "Email",
+      render: (user) => user.email,
     },
     {
       title: "Status",
+      render: (user) => (
+        <Tag color={user.status === "active" ? "green" : "red"}>
+          {user.status}
+        </Tag>
+      ),
     },
     {
       title: "Action",
+      render: (book) => (
+        <button
+          onClick={() => handleDelete(book.id)}
+          className="bg-red-100 py-1 px-2 rounded-lg text-white"
+        >
+          Sil
+        </button>
+      ),
     },
   ];
 
