@@ -18,11 +18,13 @@ import CreateCategory from "../../admin/crud/create/CreateCategory/CreateCategor
 
 function Admin() {
   const [collapsed, setCollapsed] = useState(true);
-  const [activeSection, setActiveSection] = useState("");
+  const [activeSection, setActiveSection] = useState(() => {
+    const savedSection = localStorage.getItem("menu-item");
+    return savedSection ? JSON.parse(savedSection) : "dashboard";
+  });
   useEffect(() => {
-    setActiveSection(JSON.parse(localStorage.getItem("menu-item")));
-    console.log(activeSection);
-  }, []);
+    localStorage.setItem("menu-item", JSON.stringify(activeSection));
+  }, [activeSection]);
 
   const menuItems = [
     {
@@ -77,6 +79,7 @@ function Admin() {
       view: <CreateCategory setActiveSection={setActiveSection} />,
     },
   ];
+  console.log(activeSection);
 
   return (
     <Layout className="min-h-screen bg-white">
@@ -101,7 +104,7 @@ function Admin() {
         >
           {sections.map(
             (item) =>
-              item.label.toLowerCase() === activeSection.toLowerCase() && (
+              item.label.toLowerCase() === activeSection?.toLowerCase() && (
                 <div key={item.label}>{item.view}</div>
               )
           )}
