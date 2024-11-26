@@ -1,4 +1,4 @@
-import { Menu } from "antd";
+// import { Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import siteLogo from "../../../assets/images/dolphin-logo.png";
 
@@ -9,20 +9,6 @@ function Sidebar({
   setCollapsed,
   setActiveSection,
 }) {
-  const [selectedKey, setSelectedKey] = useState("1");
-  const handleMenuClick = (e) => {
-    const selectedItem = menuItems.find((item) => item.key === e.key);
-    setActiveSection(selectedItem.value);
-    localStorage.setItem("menu-item", JSON.stringify(selectedItem.value));
-  };
-
-  useEffect(() => {
-    const selectedItem = menuItems.find((item) => item.value === activeSection);
-    if (selectedItem) {
-      setSelectedKey(selectedItem.key);
-    }
-  }, [activeSection, menuItems]);
-
   return (
     <aside
       onClick={() => setCollapsed(!collapsed)}
@@ -44,15 +30,29 @@ function Sidebar({
             src={siteLogo}
           />
         </div>
-
-        <Menu
+        <ul className="flex flex-col gap-2 w-[90%] mx-auto">
+          {menuItems.map((menuItem, index) => (
+            <li
+              key={index}
+              onClick={() => setActiveSection(menuItem.value)}
+              className={`flex items-center gap-[10px] p-2 rounded-md cursor-pointer hover:bg-gray-1050 ${
+                activeSection === menuItem.value &&
+                "bg-skyBlue-100 text-skyBlue-500 hover:!bg-skyBlue-100 menu-item"
+              }`}
+            >
+              <span className="w-[14px]">{menuItem.icon}</span>
+              <p>{menuItem.label}</p>
+            </li>
+          ))}
+        </ul>
+        {/* <Menu
           className="w-11/12 mx-auto"
           style={{ borderInlineEnd: "none" }}
           mode="inline"
           items={menuItems}
           selectedKeys={selectedKey ? [selectedKey] : []} // Controlled selected key
           onClick={handleMenuClick}
-        />
+        /> */}
       </div>
     </aside>
   );

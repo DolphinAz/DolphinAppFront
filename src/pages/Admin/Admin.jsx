@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout } from "antd";
+import { Flex, Layout } from "antd";
 import "../../admin/styles/style.css";
 import Dashboard from "../../admin/sections/Dashboard/Dashboard";
 import Sidebar from "../../admin/layout/Sidebar/Sidebar";
@@ -15,6 +15,10 @@ import Books from "../../admin/sections/Books/Books";
 import CreateBook from "../../admin/crud/create/CreateBook/CreateBook";
 import Categories from "../../admin/sections/Categories/Categories";
 import CreateCategory from "../../admin/crud/create/CreateCategory/CreateCategory";
+import ProfileIcon from "../../assets/icons/ProfileIcon";
+import DashboardIcon from "../../assets/icons/DashboardIcon";
+import Authors from "../../admin/sections/Authors/Authors";
+import GroupIcon from "../../assets/icons/GroupIcon";
 
 function Admin() {
   const [collapsed, setCollapsed] = useState(true);
@@ -28,28 +32,29 @@ function Admin() {
 
   const menuItems = [
     {
-      key: "1",
-      icon: <ProductOutlined />,
+      icon: <DashboardIcon />,
       label: "Panelim",
       value: "dashboard",
     },
     {
-      key: "2",
       icon: <UserOutlined />,
       label: "İstifadəçilər",
       value: "users",
     },
     {
-      key: "3",
       icon: <BookOutlined />,
       label: "Kitablar",
       value: "books",
     },
     {
-      key: "4",
       icon: <TagOutlined />,
       label: "Kateqoriyalar",
       value: "categories",
+    },
+    {
+      icon: <GroupIcon />,
+      label: "Media",
+      value: "media",
     },
   ];
 
@@ -77,6 +82,10 @@ function Admin() {
     {
       label: "create-category",
       view: <CreateCategory setActiveSection={setActiveSection} />,
+    },
+    {
+      label: "authors",
+      view: <Authors setActiveSection={setActiveSection} />,
     },
   ];
   console.log(activeSection);
