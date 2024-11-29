@@ -1,24 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Flex, Layout } from "antd";
+import { Layout } from "antd";
 import "../../admin/styles/style.css";
 import Dashboard from "../../admin/sections/Dashboard/Dashboard";
 import Sidebar from "../../admin/layout/Sidebar/Sidebar";
 import AdminHeader from "../../admin/layout/AdminHeader/AdminHeader";
 import Users from "../../admin/sections/Users/Users";
-import {
-  BookOutlined,
-  ProductOutlined,
-  TagOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { BookOutlined, TagOutlined, UserOutlined } from "@ant-design/icons";
 import Books from "../../admin/sections/Books/Books";
-import CreateBook from "../../admin/crud/create/CreateBook/CreateBook";
 import Categories from "../../admin/sections/Categories/Categories";
 import CreateCategory from "../../admin/crud/create/CreateCategory/CreateCategory";
-import ProfileIcon from "../../assets/icons/ProfileIcon";
 import DashboardIcon from "../../assets/icons/DashboardIcon";
 import Authors from "../../admin/sections/Authors/Authors";
 import GroupIcon from "../../assets/icons/GroupIcon";
+import BookForm from "../../admin/crud/create/BookForm/BookForm";
+import Media from "../../admin/sections/Media/Media";
 
 function Admin() {
   const [collapsed, setCollapsed] = useState(true);
@@ -73,7 +68,21 @@ function Admin() {
     },
     {
       label: "create-book",
-      view: <CreateBook setActiveSection={setActiveSection} />,
+      view: (
+        <BookForm
+          setActiveSection={setActiveSection}
+          activeSection={activeSection}
+        />
+      ),
+    },
+    {
+      label: "update-book",
+      view: (
+        <BookForm
+          setActiveSection={setActiveSection}
+          activeSection={activeSection}
+        />
+      ),
     },
     {
       label: "categories",
@@ -84,11 +93,10 @@ function Admin() {
       view: <CreateCategory setActiveSection={setActiveSection} />,
     },
     {
-      label: "authors",
-      view: <Authors setActiveSection={setActiveSection} />,
+      label: "Media",
+      view: <Media />,
     },
   ];
-  console.log(activeSection);
 
   return (
     <Layout className="min-h-screen bg-white">

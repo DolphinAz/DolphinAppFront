@@ -1,22 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  CaretDownOutlined,
-  CaretUpOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
-import { Button, Flex, Input, Pagination, Space, Table } from "antd";
-import Highlighter from "react-highlight-words";
-import CreateBook from "../../crud/create/CreateBook/CreateBook";
+import React, { useEffect, useState } from "react";
+import { Button, Flex } from "antd";
 import axios from "axios";
 import { baseUrl } from "../../../constants/baseUrl";
 import AdminTable from "../../components/AdminTable/AdminTable";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function Books({ setActiveSection }) {
   const booksUrl = "/api/book/get";
+  const deleteBookUrl = "/api/admin/book/";
+  const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   useEffect(() => {
     axios.get(baseUrl + booksUrl).then((res) => {
       const result = res.data.data.map((book, index) => ({
+        id: book.id,
         key: index + 1,
         bookImage: book.imageUrl,
         bookName: book.name,
@@ -24,9 +22,10 @@ function Books({ setActiveSection }) {
         purchasePrice: book.purchasePrice,
         categories: book.categories,
       }));
+
       setBooks(result);
     });
-  }, []);
+  }, [books]);
 
   const columns = [
     {
@@ -79,15 +78,36 @@ function Books({ setActiveSection }) {
     {
       title: "Actions",
       render: (book) => (
-        <button
-          onClick={() => handleDelete(book.id)}
-          className="bg-red-100 py-1 px-2 rounded-lg text-white"
-        >
-          Delete
-        </button>
+        <Flex justify="center" gap={5}>
+          <Button
+            onClick={() => handleDelete(book.id)}
+            className="bg-red-100 py-1 px-2 rounded-lg text-white border-transparent hover:!border-red-100 hover:!text-red-100"
+          >
+            Sil
+          </Button>
+          <Button
+            onClick={() => {
+              handleUpdate(book.id);
+              setActiveSection("update-book");
+            }}
+            className="bg-orange-500 py-1 px-2 rounded-lg text-white border-transparent hover:!border-orange-500 hover:!text-orange-500"
+          >
+            Dəyişdir
+          </Button>
+        </Flex>
       ),
     },
   ];
+
+  const handleDelete = (id) => {
+    axios
+      .delete(baseUrl + deleteBookUrl + id)
+      .then((res) => toast.success("Kitab uğurla silindi!"));
+  };
+
+  const handleUpdate = (id) => {
+    navigate("?updateId=" + id);
+  };
 
   return (
     <Flex vertical gap={10}>

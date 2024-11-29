@@ -5,15 +5,16 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { baseUrl } from "../../../../constants/baseUrl";
 import toast from "react-hot-toast";
-import Books from "../../../sections/Books/Books";
+import { useLocation, useNavigate } from "react-router-dom";
 
-function CreateBook({ setActiveSection }) {
+function BookForm({ setActiveSection, activeSection }) {
   const publisherUrl = "/api/publisher/get";
   const sellerUrl = "/api/seller/get";
   const authorUrl = "/api/author/get";
   const categoryUrl = "/api/category/get";
   const languageUrl = "/api/language/get";
   const createBookUrl = "/api/admin/book";
+  const getBookUrl = "/api/book/get";
 
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -22,6 +23,11 @@ function CreateBook({ setActiveSection }) {
   const [authors, setAuthors] = useState([]);
   const [categories, setCategories] = useState([]);
   const [languages, setLanguages] = useState([]);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const urlParams = new URLSearchParams(location.search);
+  const updateId = urlParams.get("updateId");
 
   const [values, setValues] = useState({
     Name: "",
@@ -41,10 +47,47 @@ function CreateBook({ setActiveSection }) {
   const formData = new FormData();
   useEffect(() => {
     Object.entries(values).map(([key, value]) => {
-      formData.append(key, value);
+      if (key === "CategoryIds") {
+        value.map((categoryItem) => {
+          formData.append("CategoryIds", categoryItem);
+        });
+      } else {
+        formData.append(key, value);
+      }
     });
+
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(`${key}: ${value}`);
+    // }
   }, [values]);
 
+  useEffect(() => {
+    if (updateId) {
+      axios.get(`${baseUrl + getBookUrl}/${updateId}`).then((res) => {
+        const fixedData = res.data.data;
+        console.log(fixedData);
+
+        setValues({
+          ...values,
+          Name: fixedData.name,
+          Description: fixedData.description,
+          StockCount: fixedData.stockCount,
+          PageCount: fixedData.pageCount,
+          Year: fixedData.year,
+          File: fixedData.imageUrl,
+          PurchasePrice: fixedData.purchasePrice,
+          IsFame: fixedData.isFame,
+          AuthorId: fixedData.author.id,
+          PublisherId: fixedData.publisher.id,
+          SellerId: fixedData.seller.id,
+          LanguageId: fixedData.language.id,
+          CategoryIds: [...fixedData.categories.map((category) => category.id)],
+        });
+
+        setImagePreview(fixedData.imageUrl);
+      });
+    }
+  }, []);
   const checkInputs = Object.values(values).every(
     (value) => value.length !== 0
   );
@@ -65,6 +108,8 @@ function CreateBook({ setActiveSection }) {
             toast.success("Yeni kitab yaradıldı");
           })
           .catch((err) => {
+            console.log(err);
+
             toast.error(err.response.data.message);
           });
       } catch (error) {
@@ -73,6 +118,26 @@ function CreateBook({ setActiveSection }) {
       }
     } else {
       toast.error("Bütün xanaları doldurun!");
+    }
+  };
+
+  const updateBookOnSubmit = () => {
+    try {
+      axios
+        .post(baseUrl + createBookUrl + updateId, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            accept: "*/*",
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          setActiveSection("books");
+          toast.success("Kitab yeniləndi");
+          navigate("/admin");
+        });
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -105,7 +170,6 @@ function CreateBook({ setActiveSection }) {
 
   const categoryRender = (props) => {
     const { label, closable, onClose } = props;
-
     const onPreventMouseDown = (event) => {
       event.preventDefault();
       event.stopPropagation();
@@ -113,6 +177,7 @@ function CreateBook({ setActiveSection }) {
 
     return (
       <Tag
+        key={label}
         onMouseDown={onPreventMouseDown}
         closable={closable}
         onClose={onClose}
@@ -127,8 +192,7 @@ function CreateBook({ setActiveSection }) {
 
   return (
     <Form
-      initialValues={values}
-      onFinish={createBookOnSubmit}
+      onFinish={updateId ? updateBookOnSubmit : createBookOnSubmit}
       className="admin-form flex flex-col gap-5"
     >
       <div className="create-book-form">
@@ -139,18 +203,15 @@ function CreateBook({ setActiveSection }) {
         >
           <h1 className="text-xl font-semibold">Ümumi məlumat</h1>
           <Flex vertical gap={20}>
-            <Form.Item layout="vertical" label="Kitab adı" name="Name">
+            <Form.Item layout="vertical" label="Kitab adı">
               <Input
+                value={values.Name}
                 onChange={(e) => setValues({ ...values, Name: e.target.value })}
               />
             </Form.Item>
-            <Form.Item
-              className="h-24"
-              layout="vertical"
-              label="Təsvir"
-              name="Description"
-            >
+            <Form.Item className="h-24" layout="vertical" label="Təsvir">
               <TextArea
+                value={values.Description}
                 onChange={(e) =>
                   setValues({ ...values, Description: e.target.value })
                 }
@@ -197,8 +258,9 @@ function CreateBook({ setActiveSection }) {
         >
           <h1 className="text-xl font-semibold">Kitabın detalları</h1>
           <div className="flex flex-col desktop:grid desktop:grid-cols-4 gap-5">
-            <Form.Item layout="vertical" label="Qiyməti" name="PurchasePrice">
+            <Form.Item layout="vertical" label="Qiyməti">
               <InputNumber
+                value={values.PurchasePrice}
                 onChange={(selectedValue) =>
                   setValues({ ...values, PurchasePrice: selectedValue })
                 }
@@ -206,8 +268,9 @@ function CreateBook({ setActiveSection }) {
                 type="number"
               />
             </Form.Item>
-            <Form.Item layout="vertical" label="Stok" name="StockCount">
+            <Form.Item layout="vertical" label="Stok">
               <InputNumber
+                value={values.StockCount}
                 onChange={(selectedValue) =>
                   setValues({ ...values, StockCount: selectedValue })
                 }
@@ -215,8 +278,9 @@ function CreateBook({ setActiveSection }) {
                 type="number"
               />
             </Form.Item>
-            <Form.Item layout="vertical" label="Səhifə sayı" name="PageCount">
+            <Form.Item layout="vertical" label="Səhifə sayı">
               <InputNumber
+                value={values.PageCount}
                 onChange={(selectedValue) =>
                   setValues({ ...values, PageCount: selectedValue })
                 }
@@ -224,8 +288,9 @@ function CreateBook({ setActiveSection }) {
                 type="number"
               />
             </Form.Item>
-            <Form.Item layout="vertical" label="İli" name="Year">
+            <Form.Item layout="vertical" label="İli">
               <InputNumber
+                value={values.Year}
                 onChange={(selectedValue) =>
                   setValues({ ...values, Year: selectedValue })
                 }
@@ -242,8 +307,9 @@ function CreateBook({ setActiveSection }) {
         >
           <h1 className="text-xl font-semibold">Digər</h1>
           <div className="flex flex-col desktop:grid desktop:grid-cols-[1fr_1fr_2fr] gap-5">
-            <Form.Item layout="vertical" label="Məhşurdur?" name="IsFame">
+            <Form.Item layout="vertical" label="Məhşurdur?">
               <Select
+                value={values.IsFame}
                 onChange={(selectedValue) =>
                   setValues({ ...values, IsFame: selectedValue })
                 }
@@ -254,8 +320,9 @@ function CreateBook({ setActiveSection }) {
                 ]}
               />
             </Form.Item>
-            <Form.Item layout="vertical" label="Dili" name="LanguageId">
+            <Form.Item layout="vertical" label="Dili">
               <Select
+                value={values.LanguageId}
                 onChange={(selectedValue) =>
                   setValues({ ...values, LanguageId: selectedValue })
                 }
@@ -266,21 +333,22 @@ function CreateBook({ setActiveSection }) {
                 }))}
               />
             </Form.Item>
-            <Form.Item
-              layout="vertical"
-              label="Kateqoriyalar"
-              name="CategoryIds"
-            >
+            <Form.Item layout="vertical" label="Kateqoriyalar">
               <Select
+                value={values.CategoryIds}
                 onChange={(selectedValue) =>
-                  setValues({ ...values, CategoryIds: selectedValue })
+                  setValues({
+                    ...values,
+                    CategoryIds: selectedValue,
+                  })
                 }
                 mode="multiple"
-                tagRender={categoryRender}
+                tagRender={(props) => categoryRender(props)}
                 placeholder="Seç"
                 options={categories.map((category) => ({
                   value: category.id,
                   label: category.name,
+                  key: category.id,
                 }))}
               />
             </Form.Item>
@@ -293,8 +361,9 @@ function CreateBook({ setActiveSection }) {
         >
           <h1 className="text-xl font-semibold">Referanslar</h1>
           <div className="flex flex-col gap-5">
-            <Form.Item layout="vertical" label="Yazıçı" name="AuthorId">
+            <Form.Item layout="vertical" label="Yazıçı">
               <Select
+                value={values.AuthorId}
                 onChange={(selectedValue) =>
                   setValues({ ...values, AuthorId: selectedValue })
                 }
@@ -305,8 +374,9 @@ function CreateBook({ setActiveSection }) {
                 }))}
               />
             </Form.Item>
-            <Form.Item layout="vertical" label="Nəşriyyatçı" name="PublisherId">
+            <Form.Item layout="vertical" label="Nəşriyyatçı">
               <Select
+                value={values.PublisherId}
                 onChange={(selectedValue) =>
                   setValues({ ...values, PublisherId: selectedValue })
                 }
@@ -317,8 +387,9 @@ function CreateBook({ setActiveSection }) {
                 }))}
               />
             </Form.Item>
-            <Form.Item layout="vertical" label="Satıcı" name="SellerId">
+            <Form.Item layout="vertical" label="Satıcı">
               <Select
+                value={values.SellerId}
                 onChange={(selectedValue) =>
                   setValues({ ...values, SellerId: selectedValue })
                 }
@@ -335,7 +406,6 @@ function CreateBook({ setActiveSection }) {
           <Button
             onClick={() => setActiveSection("books")}
             className="ml-auto bg-gray-700 text-white"
-            type="submit"
           >
             Geri
           </Button>
@@ -352,4 +422,4 @@ function CreateBook({ setActiveSection }) {
   );
 }
 
-export default CreateBook;
+export default BookForm;

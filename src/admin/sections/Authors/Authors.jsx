@@ -1,7 +1,12 @@
 import React from "react";
+import AdminTable from "../../components/AdminTable/AdminTable";
 
 function Authors({ setActiveSection }) {
-  return <div>Authors</div>;
+  return (
+    <div>
+      <AdminTable data={[]} columns={[]} />
+    </div>
+  );
 }
 
 export default Authors;
