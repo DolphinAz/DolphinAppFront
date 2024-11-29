@@ -8,12 +8,12 @@ import Users from "../../admin/sections/Users/Users";
 import { BookOutlined, TagOutlined, UserOutlined } from "@ant-design/icons";
 import Books from "../../admin/sections/Books/Books";
 import Categories from "../../admin/sections/Categories/Categories";
-import CreateCategory from "../../admin/crud/create/CreateCategory/CreateCategory";
 import DashboardIcon from "../../assets/icons/DashboardIcon";
 import Authors from "../../admin/sections/Authors/Authors";
 import GroupIcon from "../../assets/icons/GroupIcon";
 import BookForm from "../../admin/crud/create/BookForm/BookForm";
 import Media from "../../admin/sections/Media/Media";
+import CategoryForm from "../../admin/crud/create/CategoryForm/CategoryForm";
 
 function Admin() {
   const [collapsed, setCollapsed] = useState(true);
@@ -90,7 +90,11 @@ function Admin() {
     },
     {
       label: "create-category",
-      view: <CreateCategory setActiveSection={setActiveSection} />,
+      view: <CategoryForm setActiveSection={setActiveSection} />,
+    },
+    {
+      label: "update-category",
+      view: <CategoryForm setActiveSection={setActiveSection} />,
     },
     {
       label: "Media",

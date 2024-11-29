@@ -3,11 +3,14 @@ import AdminTable from "../../components/AdminTable/AdminTable";
 import axios from "axios";
 import { baseUrl } from "../../../constants/baseUrl";
 import { Button, Flex } from "antd";
+import { useNavigate } from "react-router-dom";
 
 function Categories({ setActiveSection }) {
   const categoriesUrl = "/api/category/get";
   const deleteCategoriesUrl = "/api/admin/category";
   const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
+
   useEffect(() => {
     axios
       .get(baseUrl + categoriesUrl)
@@ -46,7 +49,10 @@ function Categories({ setActiveSection }) {
             Sil
           </Button>
           <Button
-            onClick={() => handleUpdate(category.id)}
+            onClick={() => {
+              handleUpdate(category.id);
+              setActiveSection("update-category");
+            }}
             className="bg-orange-500 py-1 px-2 rounded-lg text-white border-transparent hover:!border-orange-500 hover:!text-orange-500"
           >
             Dəyişdir
@@ -60,6 +66,10 @@ function Categories({ setActiveSection }) {
     axios
       .delete(`${baseUrl + deleteCategoriesUrl}/${id}`)
       .then((res) => console.log(res));
+  };
+
+  const handleUpdate = (id) => {
+    navigate("?updateId=" + id);
   };
 
   return (

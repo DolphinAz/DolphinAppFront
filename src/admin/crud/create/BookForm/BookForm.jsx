@@ -29,6 +29,33 @@ function BookForm({ setActiveSection, activeSection }) {
   const urlParams = new URLSearchParams(location.search);
   const updateId = urlParams.get("updateId");
 
+  useEffect(() => {
+    try {
+      axios
+        .get(baseUrl + publisherUrl)
+        .then((res) => setPublishers(res.data.data))
+        .catch((err) => toast.error(err.message));
+      axios
+        .get(baseUrl + sellerUrl)
+        .then((res) => setSellers(res.data.data))
+        .catch((err) => toast.error(err.message));
+      axios
+        .get(baseUrl + authorUrl)
+        .then((res) => setAuthors(res.data.data))
+        .catch((err) => toast.error(err.message));
+      axios
+        .get(baseUrl + categoryUrl)
+        .then((res) => setCategories(res.data.data))
+        .catch((err) => toast.error(err.message));
+      axios
+        .get(baseUrl + languageUrl)
+        .then((res) => setLanguages(res.data.data))
+        .catch((err) => toast.error(err.message));
+    } catch (error) {
+      toast.error(error);
+    }
+  }, []);
+
   const [values, setValues] = useState({
     Name: "",
     Description: "",
@@ -65,7 +92,6 @@ function BookForm({ setActiveSection, activeSection }) {
     if (updateId) {
       axios.get(`${baseUrl + getBookUrl}/${updateId}`).then((res) => {
         const fixedData = res.data.data;
-        console.log(fixedData);
 
         setValues({
           ...values,
@@ -74,7 +100,7 @@ function BookForm({ setActiveSection, activeSection }) {
           StockCount: fixedData.stockCount,
           PageCount: fixedData.pageCount,
           Year: fixedData.year,
-          File: fixedData.imageUrl,
+          File: "",
           PurchasePrice: fixedData.purchasePrice,
           IsFame: fixedData.isFame,
           AuthorId: fixedData.author.id,
@@ -124,14 +150,13 @@ function BookForm({ setActiveSection, activeSection }) {
   const updateBookOnSubmit = () => {
     try {
       axios
-        .post(baseUrl + createBookUrl + updateId, formData, {
+        .put(`${baseUrl + createBookUrl}/${updateId}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             accept: "*/*",
           },
         })
         .then((res) => {
-          console.log(res);
           setActiveSection("books");
           toast.success("Kitab yeniləndi");
           navigate("/admin");
@@ -140,33 +165,6 @@ function BookForm({ setActiveSection, activeSection }) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    try {
-      axios
-        .get(baseUrl + publisherUrl)
-        .then((res) => setPublishers(res.data.data))
-        .catch((err) => toast.error(err.message));
-      axios
-        .get(baseUrl + sellerUrl)
-        .then((res) => setSellers(res.data.data))
-        .catch((err) => toast.error(err.message));
-      axios
-        .get(baseUrl + authorUrl)
-        .then((res) => setAuthors(res.data.data))
-        .catch((err) => toast.error(err.message));
-      axios
-        .get(baseUrl + categoryUrl)
-        .then((res) => setCategories(res.data.data))
-        .catch((err) => toast.error(err.message));
-      axios
-        .get(baseUrl + languageUrl)
-        .then((res) => setLanguages(res.data.data))
-        .catch((err) => toast.error(err.message));
-    } catch (error) {
-      toast.error(error);
-    }
-  }, []);
 
   const categoryRender = (props) => {
     const { label, closable, onClose } = props;
@@ -406,15 +404,18 @@ function BookForm({ setActiveSection, activeSection }) {
           <Button
             onClick={() => setActiveSection("books")}
             className="ml-auto bg-gray-700 text-white"
+            htmlType="submit"
           >
             Geri
           </Button>
           <Button
-            className="bg-skyBlue-500 text-white"
+            className={`text-white ${
+              updateId ? "bg-orange-500" : "bg-skyBlue-500"
+            }`}
             type="submit"
             htmlType="submit"
           >
-            Əlavə et
+            {updateId ? "Düzəliş et" : "Əlavə et"}
           </Button>
         </Flex>
       </div>
