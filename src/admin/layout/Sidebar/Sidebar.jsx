@@ -1,6 +1,7 @@
 // import { Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import siteLogo from "../../../assets/images/dolphin-logo.png";
+import { useNavigate } from "react-router-dom";
 
 function Sidebar({
   activeSection,
@@ -9,6 +10,8 @@ function Sidebar({
   setCollapsed,
   setActiveSection,
 }) {
+  const navigate = useNavigate();
+
   return (
     <aside
       onClick={() => setCollapsed(!collapsed)}
@@ -34,7 +37,10 @@ function Sidebar({
           {menuItems.map((menuItem, index) => (
             <li
               key={index}
-              onClick={() => setActiveSection(menuItem.value)}
+              onClick={() => {
+                setActiveSection(menuItem.value);
+                navigate("/admin");
+              }}
               className={`flex items-center gap-[10px] p-2 rounded-md cursor-pointer hover:bg-gray-1050 ${
                 activeSection === menuItem.value &&
                 "bg-skyBlue-100 text-skyBlue-500 hover:!bg-skyBlue-100 menu-item"
