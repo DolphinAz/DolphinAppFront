@@ -2,7 +2,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, Input, InputNumber, Select } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { baseUrl } from "../../../../constants/baseUrl";
+import { baseUrl } from "../../../constants/baseUrl";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -164,7 +164,10 @@ function AuthorForm({ setActiveSection }) {
       </div>
       <Flex gap={10} className="ml-auto">
         <Button
-          onClick={() => setActiveSection("media")}
+          onClick={() => {
+            navigate("/admin");
+            setActiveSection("media");
+          }}
           className="bg-gray-700 text-white"
           htmlType="submit"
         >

@@ -11,10 +11,11 @@ import Categories from "../../admin/sections/Categories/Categories";
 import DashboardIcon from "../../assets/icons/DashboardIcon";
 import Authors from "../../admin/sections/Authors/Authors";
 import GroupIcon from "../../assets/icons/GroupIcon";
-import BookForm from "../../admin/crud/create/BookForm/BookForm";
 import Media from "../../admin/sections/Media/Media";
-import CategoryForm from "../../admin/crud/create/CategoryForm/CategoryForm";
-import AuthorForm from "../../admin/crud/create/AuthorForm/AuthorForm";
+import CategoryForm from "../../admin/forms/CategoryForm/CategoryForm";
+import AuthorForm from "../../admin/forms/AuthorForm/AuthorForm";
+import BookForm from "../../admin/forms/BookForm/BookForm";
+import SellerForm from "../../admin/forms/SellerForm/SellerForm";
 
 function Admin() {
   const [collapsed, setCollapsed] = useState(true);
@@ -103,6 +104,14 @@ function Admin() {
     {
       label: "update-author",
       view: <AuthorForm setActiveSection={setActiveSection} />,
+    },
+    {
+      label: "create-seller",
+      view: <SellerForm setActiveSection={setActiveSection} />,
+    },
+    {
+      label: "update-seller",
+      view: <SellerForm setActiveSection={setActiveSection} />,
     },
   ];
 

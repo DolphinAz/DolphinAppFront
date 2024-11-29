@@ -2,99 +2,98 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, Input } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { baseUrl } from "../../../../constants/baseUrl";
+import { baseUrl } from "../../../constants/baseUrl";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 
-function CategoryForm({ setActiveSection }) {
-  const createCategoryUrl = "/api/admin/category";
-  const getCategoryUrl = "/api/category/get";
+function SellerForm({ setActiveSection }) {
+  const sellerUrl = "/api/admin/seller";
+  const getSellerUrl = "/api/seller/get";
+
   const navigate = useNavigate();
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
   const updateId = urlParams.get("updateId");
 
-  const formData = new FormData();
   const [imagePreview, setImagePreview] = useState(null);
   const [values, setValues] = useState({
     Name: "",
     File: "",
   });
 
+  const formData = new FormData();
   useEffect(() => {
     Object.entries(values).map(([key, value]) => {
       formData.append(key, value);
     });
   }, [values]);
-
+  const checkInputs = Object.values(values).every(
+    (value) => value.length !== 0
+  );
   useEffect(() => {
     if (updateId) {
-      axios.get(`${baseUrl + getCategoryUrl}/${updateId}`).then((res) => {
+      axios.get(`${baseUrl + getSellerUrl}/${updateId}`).then((res) => {
         const fixedData = res.data.data;
-        setValues({
-          ...values,
-          Name: fixedData.name,
-          File: "",
-        });
+        setValues({ ...values, Name: fixedData.name });
         setImagePreview(fixedData.imageUrl);
       });
     }
   }, []);
 
-  const checkInputs = Object.values(values).every(
-    (value) => value.length !== 0
-  );
-
-  const createCategoryOnSubmit = () => {
+  const createSellerOnSubmit = () => {
     if (checkInputs) {
       try {
         axios
-          .post(baseUrl + createCategoryUrl, formData, {
+          .post(baseUrl + sellerUrl, formData, {
             headers: {
               "Content-Type": "multipart/form-data",
               accept: "*/*",
             },
           })
           .then((res) => {
-            toast.success("Yeni kitab yaradıldı");
-            setActiveSection("categories");
+            console.log(res);
+            setActiveSection("media");
+            toast.success("Yeni satıcı yaradıldı");
           })
-          .catch((err) => toast.error(err.response.data.message));
+          .catch((err) => {
+            console.log(err);
+            // toast.error(err.response.data.message);
+          });
       } catch (error) {
-        toast.error(error);
+        console.log(error);
       }
     } else {
       toast.error("Bütün xanaları doldurun!");
     }
   };
 
-  const updateCategoryOnSubmit = () => {
+  const updateSellerOnSubmit = () => {
     axios
-      .put(`${baseUrl + createCategoryUrl}/${updateId}`, formData, {
+      .put(`${baseUrl + sellerUrl}/${updateId}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           accept: "*/*",
         },
       })
       .then((res) => {
-        setActiveSection("categories");
-        toast.success("Kateqoriya yeniləndi");
+        setActiveSection("media");
+        toast.success("Kitab yeniləndi");
         navigate("/admin");
       });
   };
   return (
     <Form
       className="admin-form flex flex-col gap-5"
-      onFinish={updateId ? updateCategoryOnSubmit : createCategoryOnSubmit}
+      onFinish={updateId ? updateSellerOnSubmit : createSellerOnSubmit}
     >
       <Flex
         className="bg-white rounded-lg p-5 drop-shadow-md first"
         vertical
         gap={20}
       >
-        <h1 className="text-xl font-semibold">Kateqoriya yarat</h1>
+        <h1 className="text-xl font-semibold">Satıcı yarat</h1>
         <Flex vertical gap={20}>
-          <Form.Item layout="vertical" label="Kateqoriya adı">
+          <Form.Item layout="vertical" label="Satıcı adı">
             <Input
               value={values.Name}
               onChange={(e) => setValues({ ...values, Name: e.target.value })}
@@ -126,18 +125,27 @@ function CategoryForm({ setActiveSection }) {
         </Flex>
       </Flex>
       <Flex className="ml-auto" gap={5}>
-        <Button htmlType="submit" className="bg-gray-700 text-white">
+        <Button
+          onClick={() => {
+            navigate("/admin");
+            setActiveSection("media");
+          }}
+          className="bg-gray-700 text-white"
+        >
           Geri
         </Button>
         <Button
+          className={`text-white ${
+            updateId ? "bg-orange-500" : "bg-skyBlue-500"
+          }`}
+          type="submit"
           htmlType="submit"
-          className="bg-skyBlue-500 text-white border-transparent"
         >
-          Əlavə et
+          {updateId ? "Düzəliş et" : "Əlavə et"}
         </Button>
       </Flex>
     </Form>
   );
 }
 
-export default CategoryForm;
+export default SellerForm;

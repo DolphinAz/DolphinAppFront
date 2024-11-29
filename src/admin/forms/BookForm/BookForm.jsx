@@ -3,7 +3,7 @@ import { Button, Flex, Form, Input, InputNumber, Select, Tag } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { baseUrl } from "../../../../constants/baseUrl";
+import { baseUrl } from "../../../constants/baseUrl";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -402,7 +402,10 @@ function BookForm({ setActiveSection }) {
         </Flex>
         <Flex className="sixth" gap={10}>
           <Button
-            onClick={() => setActiveSection("books")}
+            onClick={() => {
+              navigate("/admin");
+              setActiveSection("books");
+            }}
             className="ml-auto bg-gray-700 text-white"
             htmlType="submit"
           >
