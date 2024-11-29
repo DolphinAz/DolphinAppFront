@@ -14,6 +14,7 @@ import GroupIcon from "../../assets/icons/GroupIcon";
 import BookForm from "../../admin/crud/create/BookForm/BookForm";
 import Media from "../../admin/sections/Media/Media";
 import CategoryForm from "../../admin/crud/create/CategoryForm/CategoryForm";
+import AuthorForm from "../../admin/crud/create/AuthorForm/AuthorForm";
 
 function Admin() {
   const [collapsed, setCollapsed] = useState(true);
@@ -77,12 +78,7 @@ function Admin() {
     },
     {
       label: "update-book",
-      view: (
-        <BookForm
-          setActiveSection={setActiveSection}
-          activeSection={activeSection}
-        />
-      ),
+      view: <BookForm setActiveSection={setActiveSection} />,
     },
     {
       label: "categories",
@@ -98,7 +94,15 @@ function Admin() {
     },
     {
       label: "Media",
-      view: <Media />,
+      view: <Media setActiveSection={setActiveSection} />,
+    },
+    {
+      label: "create-author",
+      view: <AuthorForm setActiveSection={setActiveSection} />,
+    },
+    {
+      label: "update-author",
+      view: <AuthorForm setActiveSection={setActiveSection} />,
     },
   ];
 

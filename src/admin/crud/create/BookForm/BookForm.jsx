@@ -7,7 +7,7 @@ import { baseUrl } from "../../../../constants/baseUrl";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 
-function BookForm({ setActiveSection, activeSection }) {
+function BookForm({ setActiveSection }) {
   const publisherUrl = "/api/publisher/get";
   const sellerUrl = "/api/seller/get";
   const authorUrl = "/api/author/get";

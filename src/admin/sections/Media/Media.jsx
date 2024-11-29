@@ -3,22 +3,22 @@ import Authors from "../Authors/Authors";
 import Sellers from "../Sellers/Sellers";
 import Publishers from "../Publishers/Publishers";
 
-function Media() {
+function Media({ setActiveSection }) {
   const mediaNavigation = [
     {
       label: "Yazıçı",
       value: "authors",
-      view: <Authors />,
+      view: <Authors setActiveSection={setActiveSection} />,
     },
     {
       label: "Satıcı",
       value: "sellers",
-      view: <Sellers />,
+      view: <Sellers setActiveSection={setActiveSection} />,
     },
     {
       label: "Nəşriyyatçı",
       value: "publishers",
-      view: <Publishers />,
+      view: <Publishers setActiveSection={setActiveSection} />,
     },
   ];
 
