@@ -16,6 +16,7 @@ import CategoryForm from "../../admin/forms/CategoryForm/CategoryForm";
 import AuthorForm from "../../admin/forms/AuthorForm/AuthorForm";
 import BookForm from "../../admin/forms/BookForm/BookForm";
 import SellerForm from "../../admin/forms/SellerForm/SellerForm";
+import PublisherForm from "../../admin/forms/PublisherForm/PublisherForm";
 
 function Admin() {
   const [collapsed, setCollapsed] = useState(true);
@@ -112,6 +113,14 @@ function Admin() {
     {
       label: "update-seller",
       view: <SellerForm setActiveSection={setActiveSection} />,
+    },
+    {
+      label: "create-publisher",
+      view: <PublisherForm setActiveSection={setActiveSection} />,
+    },
+    {
+      label: "update-publisher",
+      view: <PublisherForm setActiveSection={setActiveSection} />,
     },
   ];
 

@@ -97,7 +97,9 @@ function AuthorForm({ setActiveSection }) {
           vertical
           gap={20}
         >
-          <h1 className="text-xl font-semibold">Ümumi məlumat</h1>
+          <h1 className="text-xl font-semibold">
+            {updateId ? "Yazıçını yenilə" : "Yazıçı yarat"}
+          </h1>
           <Flex vertical gap={20}>
             <Form.Item layout="vertical" label="Yazıçı adı">
               <Input

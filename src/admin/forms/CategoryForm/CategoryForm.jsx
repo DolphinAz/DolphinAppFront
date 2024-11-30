@@ -92,7 +92,9 @@ function CategoryForm({ setActiveSection }) {
         vertical
         gap={20}
       >
-        <h1 className="text-xl font-semibold">Kateqoriya yarat</h1>
+        <h1 className="text-xl font-semibold">
+          {updateId ? "Kateqoriyanı yenilə" : "Kateqoriya yarat"}
+        </h1>
         <Flex vertical gap={20}>
           <Form.Item layout="vertical" label="Kateqoriya adı">
             <Input

@@ -25,7 +25,7 @@ function Books({ setActiveSection }) {
 
       setBooks(result);
     });
-  }, [books]);
+  }, []);
 
   const columns = [
     {
@@ -100,9 +100,10 @@ function Books({ setActiveSection }) {
   ];
 
   const handleDelete = (id) => {
-    axios
-      .delete(baseUrl + deleteBookUrl + id)
-      .then((res) => toast.success("Kitab uğurla silindi!"));
+    axios.delete(baseUrl + deleteBookUrl + id).then((res) => {
+      toast.success("Kitab uğurla silindi!");
+      setBooks((prev) => prev.filter((book) => book.id !== id));
+    });
   };
 
   const handleUpdate = (id) => {

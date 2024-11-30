@@ -15,7 +15,7 @@ function Sellers({ setActiveSection }) {
 
   useEffect(() => {
     axios.get(baseUrl + getSellerUrl).then((res) => setSellers(res.data.data));
-  }, [sellers]);
+  }, []);
 
   const columns = [
     {
@@ -67,9 +67,10 @@ function Sellers({ setActiveSection }) {
   ];
 
   const handleDelete = (id) => {
-    axios
-      .delete(`${baseUrl + sellersUrl}/${id}`)
-      .then((res) => toast.success("Satıcı uğurla silindi!"));
+    axios.delete(`${baseUrl + sellersUrl}/${id}`).then((res) => {
+      toast.success("Satıcı uğurla silindi!");
+      setSellers((prev) => prev.filter((seller) => seller.id !== id));
+    });
   };
 
   const handleUpdate = (id) => {

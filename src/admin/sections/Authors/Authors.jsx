@@ -15,7 +15,7 @@ function Authors({ setActiveSection }) {
   const navigate = useNavigate();
   useEffect(() => {
     axios.get(baseUrl + getAuthorsUrl).then((res) => setAuthors(res.data.data));
-  }, [authors]);
+  }, []);
 
   const columns = [
     {
@@ -56,8 +56,8 @@ function Authors({ setActiveSection }) {
 
   const handleDelete = (id) => {
     axios.delete(`${baseUrl + authorsUrl}/${id}`).then((res) => {
-      console.log(res);
-      toast.success("Yazıçı silindi");
+      toast.success("Yazıçı uğurla silindi!");
+      setAuthors((prev) => prev.filter((author) => author.id !== id));
     });
   };
 

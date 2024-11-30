@@ -4,6 +4,7 @@ import axios from "axios";
 import { baseUrl } from "../../../constants/baseUrl";
 import { Button, Flex } from "antd";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function Categories({ setActiveSection }) {
   const categoriesUrl = "/api/category/get";
@@ -15,7 +16,7 @@ function Categories({ setActiveSection }) {
     axios
       .get(baseUrl + categoriesUrl)
       .then((res) => setCategories(res.data.data));
-  }, [categories]);
+  }, []);
 
   const columns = [
     {
@@ -63,9 +64,10 @@ function Categories({ setActiveSection }) {
   ];
 
   const handleDelete = (id) => {
-    axios
-      .delete(`${baseUrl + deleteCategoriesUrl}/${id}`)
-      .then((res) => console.log(res));
+    axios.delete(`${baseUrl + deleteCategoriesUrl}/${id}`).then((res) => {
+      toast.success("Kateqoriya uğurla silindi!");
+      setCategories((prev) => prev.filter((category) => category.id !== id));
+    });
   };
 
   const handleUpdate = (id) => {
