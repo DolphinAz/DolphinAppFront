@@ -18,6 +18,7 @@ import Error from "./pages/Error/Error";
 import { Toaster } from "react-hot-toast";
 import PageLoader from "./components/PageLoader/PageLoader";
 import Admin from "./pages/Admin/Admin";
+import AdminLogin from "./pages/AdminLogin/AdminLogin";
 
 function App() {
   const location = useLocation();
@@ -40,7 +41,8 @@ function App() {
       location.pathname === "/login" ||
       location.pathname === "/register" ||
       location.pathname === "/reset-password" ||
-      location.pathname === "/admin"
+      location.pathname === "/admin" ||
+      location.pathname === "/admin/login"
     ) {
       setActivateLayout(false);
     } else {
@@ -94,6 +96,7 @@ function App() {
 
         {/*---- ADMIN ROUTES ----*/}
         <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
       </Routes>
       {activateLayout ? <Footer /> : ""}
     </>

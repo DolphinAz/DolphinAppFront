@@ -86,3 +86,7 @@ textarea,
 .menu-item svg {
   fill: #0b84bc;
 }
+
+.custom-form-item .ant-col {
+  flex: none !important;
+}

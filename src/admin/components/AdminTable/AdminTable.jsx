@@ -34,12 +34,12 @@ function AdminTable({ data, columns }) {
           </tbody>
         </table>
       </div>
-      <Pagination
+      {/* <Pagination
         className="ml-auto"
         showSizeChanger
         defaultCurrent={3}
         total={data.length}
-      />
+      /> */}
     </div>
   );
 }

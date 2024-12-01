@@ -13,17 +13,7 @@ function Books({ setActiveSection }) {
   const [books, setBooks] = useState([]);
   useEffect(() => {
     axios.get(baseUrl + booksUrl).then((res) => {
-      const result = res.data.data.map((book, index) => ({
-        id: book.id,
-        key: index + 1,
-        bookImage: book.imageUrl,
-        bookName: book.name,
-        discountPrice: book.discountPrice,
-        purchasePrice: book.purchasePrice,
-        categories: book.categories,
-      }));
-
-      setBooks(result);
+      setBooks(res.data.data);
     });
   }, []);
 
@@ -38,23 +28,23 @@ function Books({ setActiveSection }) {
         <div className="flex justify-center">
           <img
             className="w-[40px] h-[40px] object-cover rounded-lg"
-            src={book.bookImage}
-            alt={book.bookName}
+            src={book.imageUrl}
+            alt={book.name}
           />
         </div>
       ),
     },
     {
       title: "Kitab adı",
-      render: (book) => <span>{book.bookName}</span>,
+      render: (book) => book.name,
     },
     {
       title: "Endirim",
-      render: (book) => <span>{book.discountPrice}</span>,
+      render: (book) => book.discountPrice,
     },
     {
       title: "Qiymət",
-      render: (book) => <span>{book.purchasePrice}</span>,
+      render: (book) => book.purchasePrice,
     },
     {
       title: "Kateqoriyalar",
