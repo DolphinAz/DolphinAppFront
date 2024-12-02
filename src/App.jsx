@@ -25,6 +25,9 @@ function App() {
   const [isLogged, setIsLogged] = useState(false);
   const [activateLayout, setActivateLayout] = useState(false);
   const [isoaderActive, setIsLoaderActive] = useState(false);
+  const accessTokenAdmin = localStorage.getItem("accessTokenAdmin");
+  console.log(accessTokenAdmin);
+
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -95,7 +98,10 @@ function App() {
         <Route path="*" element={<Error />} />
 
         {/*---- ADMIN ROUTES ----*/}
-        <Route path="/admin" element={<Admin />} />
+        <Route
+          path="/admin"
+          element={accessTokenAdmin ? <Admin /> : <AdminLogin />}
+        />
         <Route path="/admin/login" element={<AdminLogin />} />
       </Routes>
       {activateLayout ? <Footer /> : ""}
