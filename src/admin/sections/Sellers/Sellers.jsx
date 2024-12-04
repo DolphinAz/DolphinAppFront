@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { baseUrl } from "../../../constants/baseUrl";
 import AdminTable from "../../components/AdminTable/AdminTable";
-import { Button, Flex } from "antd";
+import { Button, Flex, Skeleton } from "antd";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -11,11 +11,18 @@ function Sellers({ setActiveSection }) {
   const sellersUrl = "/api/admin/seller";
 
   const [sellers, setSellers] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(baseUrl + getSellerUrl).then((res) => setSellers(res.data.data));
-  }, []);
+    axios
+      .get(`${baseUrl + getSellerUrl}?Page=${currentPage}&?Count=10`)
+      .then((res) => {
+        setSellers(res.data.data);
+        setTotalCount(res.data.totalCount);
+      });
+  }, [currentPage]);
 
   const columns = [
     {
@@ -66,6 +73,10 @@ function Sellers({ setActiveSection }) {
     },
   ];
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleDelete = (id) => {
     axios.delete(`${baseUrl + sellersUrl}/${id}`).then((res) => {
       toast.success("Satıcı uğurla silindi!");
@@ -79,13 +90,27 @@ function Sellers({ setActiveSection }) {
 
   return (
     <Flex vertical gap={10}>
-      <Button
-        onClick={() => setActiveSection("create-seller")}
-        className="w-fit ml-auto bg-skyBlue-500 text-white border-transparent"
-      >
-        Satıcı əlavə et
-      </Button>
-      <AdminTable columns={columns} data={sellers} />
+      {sellers.length ? (
+        <>
+          <Button
+            onClick={() => setActiveSection("create-seller")}
+            className="w-fit ml-auto bg-skyBlue-500 text-white border-transparent"
+          >
+            Satıcı əlavə et
+          </Button>
+          <AdminTable columns={columns} data={sellers} />
+          {totalCount > 10 && (
+            <Pagination
+              className="ml-auto"
+              current={currentPage}
+              onChange={handlePageChange}
+              total={totalCount}
+            />
+          )}
+        </>
+      ) : (
+        <Skeleton active />
+      )}
     </Flex>
   );
 }

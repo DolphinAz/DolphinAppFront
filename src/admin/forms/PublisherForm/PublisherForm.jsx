@@ -112,7 +112,6 @@ function PublisherForm({ setActiveSection }) {
           className={`text-white ${
             updateId ? "bg-orange-500" : "bg-skyBlue-500"
           }`}
-          type="submit"
           htmlType="submit"
         >
           {updateId ? "Düzəliş et" : "Əlavə et"}

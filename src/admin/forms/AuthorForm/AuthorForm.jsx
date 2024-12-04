@@ -177,7 +177,6 @@ function AuthorForm({ setActiveSection }) {
         </Button>
         <Button
           className={`text-white ${false ? "bg-orange-500" : "bg-skyBlue-500"}`}
-          type="submit"
           htmlType="submit"
         >
           {false ? "Düzəliş et" : "Əlavə et"}

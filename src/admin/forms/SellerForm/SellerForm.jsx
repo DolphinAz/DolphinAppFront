@@ -81,6 +81,7 @@ function SellerForm({ setActiveSection }) {
         navigate("/admin");
       });
   };
+
   return (
     <Form
       className="admin-form flex flex-col gap-5"
@@ -140,7 +141,6 @@ function SellerForm({ setActiveSection }) {
           className={`text-white ${
             updateId ? "bg-orange-500" : "bg-skyBlue-500"
           }`}
-          type="submit"
           htmlType="submit"
         >
           {updateId ? "Düzəliş et" : "Əlavə et"}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AdminTable from "../../components/AdminTable/AdminTable";
-import { Button, Flex } from "antd";
+import { Button, Flex, Skeleton } from "antd";
 import axios from "axios";
 import { baseUrl } from "../../../constants/baseUrl";
 import toast from "react-hot-toast";
@@ -12,12 +12,21 @@ function Publishers({ setActiveSection }) {
 
   const navigate = useNavigate();
   const [publishers, setPublishers] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     axios
-      .get(baseUrl + getPublisherUrl)
-      .then((res) => setPublishers(res.data.data));
-  }, []);
+      .get(`${baseUrl + getPublisherUrl}?Page=${currentPage}&?Count=10`)
+      .then((res) => {
+        setPublishers(res.data.data);
+        setTotalCount(res.data.totalCount);
+      });
+  }, [currentPage]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   const handleDelete = (id) => {
     axios.delete(`${baseUrl + publisherUrl}/${id}`).then((res) => {
@@ -65,13 +74,27 @@ function Publishers({ setActiveSection }) {
 
   return (
     <Flex vertical gap={10}>
-      <Button
-        onClick={() => setActiveSection("create-publisher")}
-        className="w-fit ml-auto bg-skyBlue-500 text-white border-transparent"
-      >
-        Nəşriyyatçı əlavə et
-      </Button>
-      <AdminTable columns={columns} data={publishers} />
+      {publishers.length ? (
+        <>
+          <Button
+            onClick={() => setActiveSection("create-publisher")}
+            className="w-fit ml-auto bg-skyBlue-500 text-white border-transparent"
+          >
+            Nəşriyyatçı əlavə et
+          </Button>
+          <AdminTable columns={columns} data={publishers} />
+          {totalCount > 10 && (
+            <Pagination
+              className="ml-auto"
+              current={currentPage}
+              onChange={handlePageChange}
+              total={totalCount}
+            />
+          )}
+        </>
+      ) : (
+        <Skeleton active />
+      )}
     </Flex>
   );
 }

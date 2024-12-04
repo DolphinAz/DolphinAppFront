@@ -1,4 +1,4 @@
-import { UploadOutlined } from "@ant-design/icons";
+import { SearchOutlined, UploadOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, Input, InputNumber, Select, Tag } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import axios from "axios";
@@ -28,6 +28,7 @@ function BookForm({ setActiveSection }) {
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
   const updateId = urlParams.get("updateId");
+  const [isClicked, setIsClicked] = useState();
 
   useEffect(() => {
     try {
@@ -120,6 +121,7 @@ function BookForm({ setActiveSection }) {
 
   const createBookOnSubmit = () => {
     if (checkInputs) {
+      setIsClicked(true);
       try {
         axios
           .post(baseUrl + createBookUrl, formData, {
@@ -129,9 +131,9 @@ function BookForm({ setActiveSection }) {
             },
           })
           .then((res) => {
-            console.log(res);
             setActiveSection("books");
             toast.success("Yeni kitab yaradıldı");
+            setIsClicked(false);
           })
           .catch((err) => {
             console.log(err);
@@ -417,7 +419,7 @@ function BookForm({ setActiveSection }) {
             className={`text-white ${
               updateId ? "bg-orange-500" : "bg-skyBlue-500"
             }`}
-            type="submit"
+            loading={isClicked}
             htmlType="submit"
           >
             {updateId ? "Düzəliş et" : "Əlavə et"}

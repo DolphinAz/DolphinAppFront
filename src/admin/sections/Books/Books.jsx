@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Flex } from "antd";
+import { Button, Flex, Pagination, Skeleton } from "antd";
 import axios from "axios";
 import { baseUrl } from "../../../constants/baseUrl";
 import AdminTable from "../../components/AdminTable/AdminTable";
@@ -11,11 +11,17 @@ function Books({ setActiveSection }) {
   const deleteBookUrl = "/api/admin/book/";
   const navigate = useNavigate();
   const [books, setBooks] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
-    axios.get(baseUrl + booksUrl).then((res) => {
-      setBooks(res.data.data);
-    });
-  }, []);
+    axios
+      .get(`${baseUrl + booksUrl}?Page=${currentPage}&?Count=10`)
+      .then((res) => {
+        setBooks(res.data.data);
+        setTotalCount(res.data.totalCount);
+      });
+  }, [currentPage]);
 
   const columns = [
     {
@@ -89,6 +95,10 @@ function Books({ setActiveSection }) {
     },
   ];
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleDelete = (id) => {
     axios.delete(baseUrl + deleteBookUrl + id).then((res) => {
       toast.success("Kitab uğurla silindi!");
@@ -102,13 +112,27 @@ function Books({ setActiveSection }) {
 
   return (
     <Flex vertical gap={10}>
-      <Button
-        onClick={() => setActiveSection("create-book")}
-        className="w-fit ml-auto bg-skyBlue-500 text-white border-transparent"
-      >
-        Kitab əlavə et
-      </Button>
-      <AdminTable columns={columns} data={books} />
+      {books.length ? (
+        <>
+          <Button
+            onClick={() => setActiveSection("create-book")}
+            className="w-fit ml-auto bg-skyBlue-500 text-white border-transparent"
+          >
+            Kitab əlavə et
+          </Button>
+          <AdminTable columns={columns} data={books} />
+          {totalCount > 10 && (
+            <Pagination
+              className="ml-auto"
+              current={currentPage}
+              onChange={handlePageChange}
+              total={totalCount}
+            />
+          )}
+        </>
+      ) : (
+        <Skeleton active />
+      )}
     </Flex>
   );
 }

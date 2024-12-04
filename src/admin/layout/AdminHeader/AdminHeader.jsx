@@ -1,11 +1,37 @@
 import { CloseOutlined, MenuOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Flex } from "antd";
-import React from "react";
-import ProfileIcon from "../../../assets/icons/ProfileIcon";
+import React, { useEffect, useState } from "react";
 import LogoutIcon from "../../../assets/icons/LogoutIcon";
 import { Header } from "antd/es/layout/layout";
+import axios from "axios";
+import { baseUrl } from "../../../constants/baseUrl";
+import { useNavigate } from "react-router-dom";
+import ProfileIcon from "../../../assets/icons/ProfileIcon";
 
 function AdminHeader({ collapsed, setCollapsed }) {
+  const infoUrl = "/api/identity/info";
+
+  const navigate = useNavigate();
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const accessTokenAdmin = localStorage.getItem("accessTokenAdmin");
+    if (accessTokenAdmin) {
+      axios
+        .get(baseUrl + infoUrl, {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${accessTokenAdmin}`,
+          },
+        })
+        .then((res) => setData(res.data.data))
+        .catch((err) => {
+          toast.error(err);
+          console.log(err);
+        });
+    }
+  }, []);
+
   const items = [
     {
       key: "1",
@@ -17,8 +43,8 @@ function AdminHeader({ collapsed, setCollapsed }) {
             alt=""
           />
           <Flex vertical>
-            <h1 className="font-medium">Fakhri Gajar</h1>
-            <p className="text-xs">fakhrigajar@gmail.com</p>
+            <h1 className="font-medium">{`${data?.name} ${data?.surname}`}</h1>
+            <p className="text-xs">{data?.email}</p>
           </Flex>
         </Flex>
       ),
@@ -36,7 +62,13 @@ function AdminHeader({ collapsed, setCollapsed }) {
     {
       key: "3",
       label: (
-        <div className="flex items-center gap-2">
+        <div
+          onClick={() => {
+            localStorage.removeItem("accessTokenAdmin");
+            navigate("/admin/login");
+          }}
+          className="flex items-center gap-2"
+        >
           <LogoutIcon />
           Çıxış
         </div>

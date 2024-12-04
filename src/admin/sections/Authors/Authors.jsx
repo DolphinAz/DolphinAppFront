@@ -3,7 +3,7 @@ import AdminTable from "../../components/AdminTable/AdminTable";
 import { useEffect } from "react";
 import axios from "axios";
 import { baseUrl } from "../../../constants/baseUrl";
-import { Button, Flex } from "antd";
+import { Button, Flex, Pagination, Skeleton } from "antd";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -12,10 +12,18 @@ function Authors({ setActiveSection }) {
   const authorsUrl = "/api/admin/author";
 
   const [authors, setAuthors] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+
   const navigate = useNavigate();
   useEffect(() => {
-    axios.get(baseUrl + getAuthorsUrl).then((res) => setAuthors(res.data.data));
-  }, []);
+    axios
+      .get(`${baseUrl + getAuthorsUrl}?Page=${currentPage}&?Count=10`)
+      .then((res) => {
+        setAuthors(res.data.data);
+        setTotalCount(res.data.totalCount);
+      });
+  }, [currentPage]);
 
   const columns = [
     {
@@ -54,6 +62,12 @@ function Authors({ setActiveSection }) {
     },
   ];
 
+  console.log(authors);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleDelete = (id) => {
     axios.delete(`${baseUrl + authorsUrl}/${id}`).then((res) => {
       toast.success("Yazıçı uğurla silindi!");
@@ -67,13 +81,27 @@ function Authors({ setActiveSection }) {
 
   return (
     <Flex vertical gap={10}>
-      <Button
-        onClick={() => setActiveSection("create-author")}
-        className="w-fit ml-auto bg-skyBlue-500 text-white border-transparent"
-      >
-        Yazıçı əlavə et
-      </Button>
-      <AdminTable data={authors} columns={columns} />
+      {authors.length ? (
+        <>
+          <Button
+            onClick={() => setActiveSection("create-author")}
+            className="w-fit ml-auto bg-skyBlue-500 text-white border-transparent"
+          >
+            Yazıçı əlavə et
+          </Button>
+          <AdminTable data={authors} columns={columns} />
+          {totalCount > 10 && (
+            <Pagination
+              className="ml-auto"
+              current={currentPage}
+              onChange={handlePageChange}
+              total={totalCount}
+            />
+          )}
+        </>
+      ) : (
+        <Skeleton active />
+      )}
     </Flex>
   );
 }

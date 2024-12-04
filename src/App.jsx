@@ -26,7 +26,6 @@ function App() {
   const [activateLayout, setActivateLayout] = useState(false);
   const [isoaderActive, setIsLoaderActive] = useState(false);
   const accessTokenAdmin = localStorage.getItem("accessTokenAdmin");
-  console.log(accessTokenAdmin);
 
   useEffect(() => {
     window.scrollTo({
@@ -64,14 +63,12 @@ function App() {
           duration: 2000,
           style: {
             borderRadius: 10,
-            padding: 16,
             position: "relative",
             overflow: "hidden",
           },
 
-          className: "",
+          className: "custom-toast",
         }}
-        gutter={30}
         position="top-center"
         reverseOrder={true}
       />

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import AdminTable from "../../components/AdminTable/AdminTable";
 import axios from "axios";
 import { baseUrl } from "../../../constants/baseUrl";
-import { Button, Flex } from "antd";
+import { Button, Flex, Pagination, Skeleton } from "antd";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -10,13 +10,18 @@ function Categories({ setActiveSection }) {
   const categoriesUrl = "/api/category/get";
   const deleteCategoriesUrl = "/api/admin/category";
   const [categories, setCategories] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
   useEffect(() => {
     axios
-      .get(baseUrl + categoriesUrl)
-      .then((res) => setCategories(res.data.data));
-  }, []);
+      .get(`${baseUrl + categoriesUrl}?Page=${currentPage}&?Count=10`)
+      .then((res) => {
+        setCategories(res.data.data);
+        setTotalCount(res.data.totalCount);
+      });
+  }, [currentPage]);
 
   const columns = [
     {
@@ -63,6 +68,10 @@ function Categories({ setActiveSection }) {
     },
   ];
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleDelete = (id) => {
     axios.delete(`${baseUrl + deleteCategoriesUrl}/${id}`).then((res) => {
       toast.success("Kateqoriya uğurla silindi!");
@@ -76,15 +85,29 @@ function Categories({ setActiveSection }) {
 
   return (
     <Flex vertical gap={10}>
-      <div className="ml-auto">
-        <Button
-          onClick={() => setActiveSection("create-category")}
-          className="bg-skyBlue-500 text-white border-transparent"
-        >
-          Kateqoriya yarat
-        </Button>
-      </div>
-      <AdminTable columns={columns} data={categories} />
+      {categories.length ? (
+        <>
+          <div className="ml-auto">
+            <Button
+              onClick={() => setActiveSection("create-category")}
+              className="bg-skyBlue-500 text-white border-transparent"
+            >
+              Kateqoriya yarat
+            </Button>
+          </div>
+          <AdminTable columns={columns} data={categories} />
+          {totalCount > 10 && (
+            <Pagination
+              className="ml-auto"
+              current={currentPage}
+              onChange={handlePageChange}
+              total={totalCount}
+            />
+          )}
+        </>
+      ) : (
+        <Skeleton active />
+      )}
     </Flex>
   );
 }
