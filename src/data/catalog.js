@@ -1,4 +1,4 @@
-const bookRows = [
+export const seedBooks = [
   [
     "9781847941831",
     "Atomic Habits",
@@ -175,9 +175,7 @@ const bookRows = [
     "#597477",
     "Daxili sakitlik, özünüdərk və gündəlik həyata müdrik yanaşma haqqında stoik düşüncələr.",
   ],
-];
-
-export const seedBooks = bookRows.map(
+].map(
   ([
     isbn,
     title,
@@ -328,7 +326,6 @@ export const toys = [
     description,
     type: "toy",
     bestseller: ["wooden-blocks", "teddy-bear", "wooden-train"].includes(id),
-    source: "Dolphin kolleksiyası",
   }),
 );
 

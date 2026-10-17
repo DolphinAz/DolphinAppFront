@@ -10,7 +10,7 @@ import {
   updateAccount,
   changePassword,
 } from "../src/services/accounts.js";
-import { loadBooks, searchBooks, loadWork } from "../src/services/books.js";
+import { BOOKS_PAGE_SIZE, loadBookPage, loadBooks, loadWork } from "../src/services/books.js";
 import { readStorage, writeStorage } from "../src/services/storage.js";
 import {
   addItem,
@@ -222,11 +222,96 @@ test("API search validates records and direct product links keep the same price"
             covers: [100],
           },
   });
-  const books = await searchBooks("API book");
+  const { products: books } = await loadBookPage({ query: "API book" });
   assert.equal(books.length, 1);
   assert.equal(books[0].author, "Author");
   const detail = await loadWork(books[0].id);
   assert.equal(detail.price, books[0].price);
   assert.equal(detail.description, "A description");
   assert.equal(await loadWork("invalid"), null);
+});
+
+test("full catalog requests one page at a time and caches pages independently", async () => {
+  const requests = [];
+  globalThis.fetch = async (url) => {
+    const params = new URL(url).searchParams;
+    requests.push(params);
+    const page = Number(params.get("page"));
+    return { ok: true, json: async () => ({
+      numFound: 1000,
+      docs: [{ key: `/works/OL${page}W`, title: `Page ${page}` }],
+    }) };
+  };
+  const first = await loadBookPage();
+  const second = await loadBookPage({ page: 2 });
+  assert.equal(first.total, 1000);
+  assert.equal(first.pageSize, BOOKS_PAGE_SIZE);
+  assert.equal(second.page, 2);
+  assert.notEqual(first.products[0].id, second.products[0].id);
+  assert.equal(requests[0].get("q"), "*:*");
+  assert.equal(requests[0].get("limit"), "24");
+  assert.equal(requests[0].get("sort"), "editions");
+  const cached = await loadBookPage({ page: 2 });
+  assert.equal(cached.status, "cached");
+  assert.equal(requests.length, 2);
+});
+
+test("search, subject filters and sorting apply to API pagination without a language restriction", async () => {
+  let params;
+  globalThis.fetch = async (url) => {
+    params = new URL(url).searchParams;
+    return { ok: true, json: async () => ({
+      num_found: 73,
+      docs: [
+        { key: "OL123W", title: "Fantasy book" },
+        { key: "/works/OL123W", title: "Duplicate work" },
+        { key: "/invalid", title: "Invalid" },
+        null,
+      ],
+    }) };
+  };
+  const result = await loadBookPage({ query: "Dune", category: "Fantastika", sort: "title", page: 3 });
+  assert.equal(params.get("q"), '(Dune) AND subject:"fantasy"');
+  assert.equal(params.get("page"), "3");
+  assert.equal(params.get("sort"), "title");
+  assert.ok(!params.get("q").includes("language:"));
+  assert.equal(result.total, 73);
+  assert.equal(result.products.length, 1);
+  assert.equal(result.products[0].category, "Fantastika");
+  assert.equal(result.products[0].id, "OL123W");
+});
+
+test("catalog normalizes Azerbaijani searches and invalid page numbers", async () => {
+  let params;
+  globalThis.fetch = async (url) => {
+    params = new URL(url).searchParams;
+    return { ok: true, json: async () => ({ numFound: 0, docs: [] }) };
+  };
+  const result = await loadBookPage({ query: "\u00c4li", page: -4 });
+  assert.equal(params.get("q"), "(Əli)");
+  assert.equal(result.page, 1);
+  await loadBookPage({ query: "It", sort: "new", page: 1.5 });
+  assert.equal(params.get("q"), "(It)");
+  assert.equal(params.get("sort"), "new");
+  assert.equal(params.get("page"), "1");
+});
+
+test("catalog retries failures, expires old pages and respects cancellation even with a cache hit", async () => {
+  let requests = 0;
+  globalThis.fetch = async () => {
+    requests++;
+    if (requests === 1) throw new Error("Offline");
+    return { ok: true, json: async () => ({ numFound: 1, docs: [{ key: "OL1W", title: "Saved book" }] }) };
+  };
+  await assert.rejects(loadBookPage(), /Offline/);
+  await loadBookPage();
+  const controller = new AbortController();
+  controller.abort();
+  await assert.rejects(loadBookPage({}, controller.signal), { name: "AbortError" });
+  assert.equal(requests, 2);
+  const cache = readStorage("dolphin.book-pages.v1", []);
+  cache[0].updatedAt = 0;
+  writeStorage("dolphin.book-pages.v1", cache);
+  await loadBookPage();
+  assert.equal(requests, 3);
 });

@@ -1,11 +1,15 @@
 import PropTypes from "prop-types";
 import { productType } from "../types/product";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Icon from "./Icon";
 
 function ToyArt({ kind }) {
   return (
-    <svg viewBox="0 0 220 220" className="toy-art" aria-hidden="true">
+    <svg
+      viewBox="0 0 220 220"
+      className="toy-art w-full h-full max-h-full [filter:drop-shadow(3px_7px_3px_#836b5120)]"
+      aria-hidden="true"
+    >
       <ellipse cx="110" cy="183" rx="70" ry="8" fill="#344b5a" opacity=".08" />
       {kind === "bear" ? (
         <g fill="#b58a64">
@@ -133,43 +137,99 @@ function ToyArt({ kind }) {
 }
 
 export default function Cover({ product, className = "", eager = false }) {
-  const [failed, setFailed] = useState(false);
   if (product.type === "toy")
     return (
       <div
-        className={`product-cover toy-cover ${className}`}
+        className={`product-cover toy-cover relative h-full w-full aspect-[0.66] bg-[color:var(--cover-color,_#4c7783)] overflow-hidden isolate !shadow-[none] [transition:transform_0.25s] grid place-items-center rounded-[6px] [&:after]:content-[''] [&:after]:absolute [&:after]:left-0 [&:after]:top-0 [&:after]:w-[5px] [&:after]:h-full [&:after]:z-[2] [&:after]:[background:linear-gradient(90deg,_#0003,_#fff2,_#0001)] [&:after]:pointer-events-none [&:after]:hidden [&_img]:absolute [&_img]:top-0 [&_img]:right-0 [&_img]:bottom-0 [&_img]:left-0 [&_img]:w-full [&_img]:h-full [&_img]:object-cover [&_img]:z-[1] ${className}`}
         style={{ background: product.color }}
       >
         <ToyArt kind={product.illustration} />
       </div>
     );
+  const image = typeof product.image === "string" ? product.image.trim() : "";
+  return (
+    <BookCover
+      key={`${product.id}:${image}`}
+      product={product}
+      image={image}
+      className={className}
+      eager={eager}
+    />
+  );
+}
+
+function BookCover({ product, image, className, eager }) {
+  const [status, setStatus] = useState(image ? "loading" : "fallback");
+  const imageRef = useRef(null);
+  const loading = status === "loading";
+  const settleImage = useCallback((element) => {
+    setStatus(element.naturalWidth > 1 && element.naturalHeight > 1 ? "loaded" : "fallback");
+  }, []);
+
+  useEffect(() => {
+    const element = imageRef.current;
+    if (element?.complete) settleImage(element);
+  }, [image, settleImage]);
+
   return (
     <div
-      className={`product-cover ${className}`}
+      className={`product-cover relative isolate h-full w-full aspect-[0.66] overflow-hidden rounded-[2px] bg-[color:var(--cover-color,_#4c7783)] shadow-[4px_6px_9px_#1c3e4426] [transition:transform_0.25s] after:pointer-events-none after:absolute after:inset-y-0 after:left-0 after:z-[3] after:w-[5px] after:bg-[linear-gradient(90deg,#0003,#fff2,#0001)] after:content-[''] ${className}`}
       style={{ "--cover-color": product.color || "#4c7783" }}
+      role="img"
+      aria-label={product.title}
+      aria-busy={loading}
+      data-cover-state={status}
     >
-      <div
-        className="cover-fallback"
-        aria-hidden={Boolean(product.image && !failed)}
-      >
-        <span className="cover-publisher">DOLPHIN LIBRARY</span>
-        <strong>{product.title}</strong>
-        <Icon name="sparkles" size={38} />
-        <span>{product.author}</span>
-      </div>
-      {product.image && !failed && (
+      {loading && (
+        <div
+          className="cover-skeleton absolute inset-0 z-10 flex animate-pulse flex-col items-center justify-center gap-3 bg-[color:#e4ecef] px-5 motion-reduce:animate-none"
+          aria-hidden="true"
+        >
+          <Icon name="book" size={34} className="text-[color:#bacbd2]" />
+          <span className="h-2 w-3/4 rounded-full bg-[color:#cedce2]" />
+          <span className="h-2 w-1/2 rounded-full bg-[color:#d6e1e6]" />
+        </div>
+      )}
+      {image && status !== "fallback" && (
         <img
-          src={product.image}
-          alt={product.title}
+          ref={imageRef}
+          src={image}
+          alt=""
+          className={`absolute inset-0 z-[1] h-full w-full object-cover transition-opacity duration-300 motion-reduce:transition-none ${status === "loaded" ? "opacity-100" : "opacity-0"}`}
           loading={eager ? "eager" : "lazy"}
-          onError={() => setFailed(true)}
+          decoding="async"
+          onLoad={(event) => settleImage(event.currentTarget)}
+          onError={(event) => settleImage(event.currentTarget)}
         />
+      )}
+      {status === "fallback" && (
+        <div
+          className="cover-fallback pointer-events-none absolute inset-0 z-[2] flex flex-col justify-between items-center text-center text-[color:#fff9e9] [background:linear-gradient(135deg,_#fff1,_transparent_50%,_#0002)] py-[15px] px-2.5 after:content-[''] after:absolute after:inset-2 after:pointer-events-none after:border after:border-[color:#ffffff35] after:border-solid [&_strong]:font-editorial [&_strong]:text-[17px] [&_strong]:leading-[1.15] [&_strong]:font-medium [&_strong]:[overflow-wrap:anywhere] [&_span]:text-[7px] [&_span]:leading-[1.4] [&_.cover-publisher]:text-[5px] [&_.cover-publisher]:tracking-[1.4px] [&_svg]:opacity-[0.5] [&_svg]:w-[25px]"
+          aria-hidden="true"
+        >
+          <span className="cover-publisher">
+            DOLPHIN LIBRARY
+          </span>
+          <strong>
+            {product.title}
+          </strong>
+          <Icon name="sparkles" size={38} />
+          <span>
+            {product.author}
+          </span>
+        </div>
       )}
     </div>
   );
 }
 
 ToyArt.propTypes = { kind: PropTypes.string };
+BookCover.propTypes = {
+  product: productType.isRequired,
+  image: PropTypes.string.isRequired,
+  className: PropTypes.string.isRequired,
+  eager: PropTypes.bool.isRequired,
+};
 Cover.propTypes = {
   product: productType.isRequired,
   className: PropTypes.string,

@@ -27,8 +27,7 @@ export default function ShopProvider({ children }) {
     normalizeStore(readStorage(storeKey(currentUser()), null)),
   );
   const [books, setBooks] = useState(seedBooks);
-  const [apiStatus, setApiStatus] = useState("loading");
-  const [discovered] = useState(() => {
+  const [discovered, setDiscovered] = useState(() => {
     const saved = readStorage("dolphin.discovered.v1", []);
     return new Map(
       (Array.isArray(saved) ? saved.filter(validProduct) : []).map(
@@ -45,7 +44,6 @@ export default function ShopProvider({ children }) {
     loadBooks(controller.signal)
       .then((result) => {
         setBooks(result.books);
-        setApiStatus(result.status);
       })
       .catch(() => {});
     return () => controller.abort();
@@ -119,12 +117,14 @@ export default function ShopProvider({ children }) {
   }
 
   function toggleFavorite(product) {
-    commit((current) => ({
+    const isFavorite = storeRef.current.favorites.some((item) => item.id === product.id);
+    const saved = commit((current) => ({
       ...current,
-      favorites: current.favorites.some((item) => item.id === product.id)
+      favorites: isFavorite
         ? current.favorites.filter((item) => item.id !== product.id)
         : [...current.favorites, product],
     }));
+    if (saved && !isFavorite) toast.success("Sevimlilərə əlavə edildi");
   }
 
   function placeOrder(customer) {
@@ -154,11 +154,15 @@ export default function ShopProvider({ children }) {
   }
 
   const rememberBooks = useCallback((products) => {
-    products.forEach((product) => extraBooks.current.set(product.id, product));
-    const recent = [...extraBooks.current.values()].slice(-96);
+    products.forEach((product) => {
+      extraBooks.current.delete(product.id);
+      extraBooks.current.set(product.id, product);
+    });
+    const recent = [...extraBooks.current.values()].slice(-240);
     extraBooks.current = new Map(
       recent.map((product) => [product.id, product]),
     );
+    setDiscovered(extraBooks.current);
     writeStorage("dolphin.discovered.v1", recent);
   }, []);
   const findProduct = (id) =>
@@ -177,8 +181,8 @@ export default function ShopProvider({ children }) {
       value={{
         user,
         books,
+        discoveredBooks: [...discovered.values()],
         toys,
-        apiStatus,
         ...store,
         authenticate,
         logout,

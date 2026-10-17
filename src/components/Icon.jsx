@@ -74,18 +74,6 @@ export default function Icon({ name, size = 20, ...props }) {
         <circle cx="12" cy="12" r="3" />
       </>
     ),
-    mail: (
-      <>
-        <rect x="3" y="5" width="18" height="14" rx="2" />
-        <path d="m3 6 9 7 9-7" />
-      </>
-    ),
-    pin: (
-      <>
-        <path d="M19 10c0 6-7 12-7 12S5 16 5 10a7 7 0 1 1 14 0Z" />
-        <circle cx="12" cy="10" r="2" />
-      </>
-    ),
     sparkles: (
       <>
         <path d="m12 2 3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7Z" />

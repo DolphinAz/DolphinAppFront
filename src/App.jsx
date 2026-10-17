@@ -15,7 +15,7 @@ import Cart from "./pages/Cart/Cart";
 import Payment from "./pages/Payment/Payment";
 import ErrorPage from "./pages/Error/Error";
 import { useShop } from "./state/ShopContext";
-import "./assets/style.css";
+import "./assets/tailwind.css";
 
 function ProtectedRoute({ children }) {
   const { user } = useShop();
@@ -40,7 +40,10 @@ export default function App() {
   }, [location.pathname]);
   return (
     <>
-      <a className="skip-link" href="#main-content">
+      <a
+        className="skip-link fixed top-[-80px] left-5 z-[100] bg-[color:#fff] shadow-[0_3px_20px_#0002] py-3 px-5 [&:focus]:top-2.5"
+        href="#main-content"
+      >
         Əsas məzmuna keç
       </a>
       <Toaster

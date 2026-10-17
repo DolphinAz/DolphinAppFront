@@ -1,20 +1,30 @@
 import { seedBooks } from "../data/catalog.js";
 import { readStorage, writeStorage } from "./storage.js";
 
-export const BOOKS_API = "https://openlibrary.org";
+const BOOKS_API = "https://openlibrary.org";
+export const BOOKS_PAGE_SIZE = 24;
 const CACHE_KEY = "dolphin.books.v1";
 const CACHE_TTL = 24 * 60 * 60 * 1000;
+const PAGE_CACHE_KEY = "dolphin.book-pages.v1";
+const categorySubjects = {
+  "Bədii ədəbiyyat": "fiction",
+  "Klassiklər": "classics",
+  "Şəxsi inkişaf": "self-help",
+  "Uşaq kitabları": "juvenile fiction",
+  "Fantastika": "fantasy",
+  "Macəra": "adventure",
+};
 const searchPrice = (id) =>
   12.9 +
   ([...id.split("/").pop()].reduce((sum, char) => sum + char.charCodeAt(0), 0) %
     15);
 
-async function request(path, signal) {
+async function request(path, signal, timeoutMs = 8000) {
   const controller = new AbortController();
   const abort = () => controller.abort();
   signal?.addEventListener("abort", abort, { once: true });
   if (signal?.aborted) controller.abort();
-  const timeout = setTimeout(abort, 8000);
+  const timeout = setTimeout(abort, timeoutMs);
   try {
     const response = await fetch(`${BOOKS_API}${path}`, {
       signal: controller.signal,
@@ -68,44 +78,89 @@ export async function loadBooks(signal) {
   }
 }
 
-export async function searchBooks(query, signal) {
+function searchProduct(book, category) {
+  const id = book.key.split("/").pop();
+  const code = [...id].reduce((total, char) => total + char.charCodeAt(0), 0);
+  const subjects = (Array.isArray(book.subject) ? book.subject : [])
+    .join(" ").toLowerCase();
+  const inferredCategory = Object.entries(categorySubjects)
+    .filter(([name]) => name !== "Bədii ədəbiyyat")
+    .find(([, subject]) => subjects.includes(subject))?.[0]
+    || (subjects.includes("fiction") ? "Bədii ədəbiyyat" : "Digər kitablar");
+  return {
+    id,
+    type: "book",
+    title: book.title,
+    author: Array.isArray(book.author_name) && book.author_name.length
+      ? book.author_name.join(", ") : "Müəllif göstərilməyib",
+    category: categorySubjects[category] ? category : inferredCategory,
+    image:
+      book.cover_i > 0
+        ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg?default=false`
+        : null,
+    year: book.first_publish_year,
+    price: searchPrice(id),
+    originalPrice: null,
+    bestseller: false,
+    color: ["#446c76", "#8f6857", "#62724f"][code % 3],
+    language: "Nəşrdən asılıdır",
+    source: "Open Library",
+    description:
+      "Open Library kataloqundan əlavə edilmiş kitab. Nəşr və müəllif məlumatlarını aşağıda görə bilərsiniz.",
+  };
+}
+
+export async function loadBookPage(
+  { query = "", category = "Hamısı", sort = "featured", page = 1 } = {},
+  signal,
+) {
+  const currentPage =
+    Number.isSafeInteger(Number(page)) && Number(page) > 0 ? Number(page) : 1;
+  const term = query.trim().replace(/\u00e4/g, "ə").replace(/\u00c4/g, "Ə");
+  const subject = categorySubjects[category];
+  const searchQuery = subject
+    ? `${term ? `(${term}) AND ` : ""}subject:"${subject}"`
+    : term ? `(${term})` : "*:*";
   const params = new URLSearchParams({
-    q: query,
-    limit: "24",
-    fields: "key,title,author_name,cover_i,first_publish_year,isbn",
-    lang: "en",
+    q: searchQuery,
+    page: String(currentPage),
+    limit: String(BOOKS_PAGE_SIZE),
+    fields: "key,title,author_name,cover_i,first_publish_year,subject",
+    lang: "az",
   });
-  const data = await request(`/search.json?${params}`, signal);
-  if (!Array.isArray(data.docs)) throw new Error("Invalid search response");
-  return data.docs
-    .filter((book) => /^\/works\/OL\d+W$/.test(book.key) && book.title)
-    .map((book) => {
-      const code = [...book.key].reduce(
-        (total, char) => total + char.charCodeAt(0),
-        0,
-      );
-      return {
-        id: book.key.split("/").pop(),
-        workKey: book.key,
-        type: "book",
-        title: book.title,
-        author: book.author_name?.join(", ") || "Müəllif göstərilməyib",
-        category: "Bədii ədəbiyyat",
-        image: book.cover_i
-          ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg?default=false`
-          : null,
-        isbn: book.isbn?.[0],
-        year: book.first_publish_year,
-        price: searchPrice(book.key),
-        originalPrice: null,
-        bestseller: false,
-        color: ["#446c76", "#8f6857", "#62724f"][code % 3],
-        language: "Nəşrdən asılıdır",
-        source: "Open Library",
-        description:
-          "Open Library kataloqundan əlavə edilmiş kitab. Nəşr və müəllif məlumatlarını aşağıda görə bilərsiniz.",
-      };
-    });
+  if (["title", "new", "old"].includes(sort)) params.set("sort", sort);
+  else if (!term) params.set("sort", "editions");
+  const cacheId = params.toString();
+  const saved = readStorage(PAGE_CACHE_KEY, []);
+  const cache = Array.isArray(saved) ? saved : [];
+  const cached = cache.find(
+    (entry) => entry?.key === cacheId
+      && entry.updatedAt > Date.now() - CACHE_TTL
+      && Array.isArray(entry.result?.products)
+      && Number.isFinite(entry.result?.total),
+  );
+  if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+  if (cached) return { ...cached.result, status: "cached" };
+  const data = await request(`/search.json?${params}`, signal, 20000);
+  if (!Array.isArray(data?.docs)) throw new Error("Invalid search response");
+  const products = [...new Map(
+    data.docs
+      .filter((book) => book
+        && /^(\/works\/)?OL\d+W$/.test(book.key)
+        && typeof book.title === "string" && book.title.trim())
+      .map((book) => {
+        const product = searchProduct(book, category);
+        return [product.id, product];
+      }),
+  ).values()];
+  const count = Number(data.numFound ?? data.num_found);
+  const total = Number.isFinite(count) && count >= 0 ? count : products.length;
+  const result = { products, total, page: currentPage, pageSize: BOOKS_PAGE_SIZE };
+  writeStorage(PAGE_CACHE_KEY, [
+    ...cache.filter((entry) => entry?.key !== cacheId && entry?.updatedAt > Date.now() - CACHE_TTL),
+    { key: cacheId, result, updatedAt: Date.now() },
+  ].slice(-12));
+  return { ...result, status: "live" };
 }
 
 export async function loadWork(id, signal) {
@@ -114,7 +169,6 @@ export async function loadWork(id, signal) {
   if (!work.title) return null;
   return {
     id,
-    workKey: `/works/${id}`,
     type: "book",
     title: work.title,
     author: "Müəllif göstərilməyib",
