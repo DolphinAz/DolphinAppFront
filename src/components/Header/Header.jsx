@@ -1,186 +1,137 @@
-import React, { useEffect, useState } from "react";
-import siteLogo from "../../assets/images/site-logo.png";
-import { Link, useNavigate } from "react-router-dom";
-import { Button, Dropdown, Flex, Skeleton } from "antd";
-import { Sling as Hamburger } from "hamburger-react";
-import NotificationIcon from "../../assets/icons/NotificationIcon";
-import axios from "axios";
-import { baseUrl } from "../../constants/baseUrl";
+import { useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useShop } from "../../state/ShopContext";
+import Icon from "../Icon";
+import logo from "../../assets/images/site-logo.png";
 
-function Header({ isLogged, setIsLogged }) {
-  const infoUrl = "/api/identity/info";
-  const [userData, setUserData] = useState(null);
+const links = [
+  ["/books", "Kitablar"],
+  ["/toys", "Oyuncaqlar"],
+  ["/best-seller", "Bestseller"],
+  ["/discounts", "Endirimlər"],
+  ["/about", "Haqqımızda"],
+  ["/contact", "Əlaqə"],
+];
+export default function Header() {
+  const { user, cartCount, favorites } = useShop();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const navigate = useNavigate();
-  const navigations = [
-    {
-      label: "Haqqımızda",
-      value: "/about",
-    },
-    {
-      label: "Kitablar",
-      value: "/books",
-    },
-    {
-      label: "Oyuncaqlar",
-      value: "/toys",
-    },
-    {
-      label: "Endirimlər",
-      value: "/discounts",
-    },
-    {
-      label: "Bestseller",
-      value: "/best-seller",
-    },
-    {
-      label: "Əlaqə",
-      value: "/contact",
-    },
-  ];
-  const items = [
-    {
-      key: "1",
-      label: <Link to="profile">Profil</Link>,
-    },
-    {
-      key: "2",
-      label: <Link to="orders">Sifarişlərim</Link>,
-    },
-    {
-      type: "divider",
-    },
-    {
-      key: "3",
-      label: (
-        <span
-          onClick={() => {
-            setIsLogged(false);
-            navigate("/");
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            localStorage.removeItem("expiration");
-          }}
-        >
-          Çıxış
-        </span>
-      ),
-    },
-  ];
-
-  const accessToken = localStorage.getItem("accessToken");
-  useEffect(() => {
-    if (accessToken) {
-      axios
-        .get(baseUrl + infoUrl, {
-          headers: {
-            "Content-type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
-        .then((res) => setUserData(res.data.data))
-        .catch((err) => {
-          toast.error(err);
-          console.log(err);
-        });
-    }
-  }, [accessToken]);
-
-  const [burgerOpen, setBurgerOpen] = useState(false);
+  function search(event) {
+    event.preventDefault();
+    navigate(
+      `/books${query.trim() ? `?q=${encodeURIComponent(query.trim())}` : ""}`,
+    );
+    setMenuOpen(false);
+  }
   return (
-    <header className="mx-auto px-5 desktop:px-10 py-[18px] border-b border-border-100">
-      <Flex
-        justify="space-between"
-        className="flex flex-wrap desktop:flex-nowrap"
-        align="center"
-      >
-        <Link to="/">
-          <img src={siteLogo} alt="Site Logo" />
-        </Link>
-        <nav
-          className={`order-1 w-full desktop:w-fit desktop:block desktop:order-none duration-300 overflow-hidden desktop:h-fit ${
-            burgerOpen ? "h-[244px] mt-[30px]" : "h-0"
-          }`}
-        >
-          <Flex className="gap-5 desktop:gap-[32px] flex flex-col desktop:flex-row">
-            {navigations.map((navigation, index) => (
-              <Link
-                onClick={() => setBurgerOpen(false)}
-                key={index}
-                className="font-medium hover:text-skyBlue-500 hover:underline"
-                to={navigation.value}
-              >
-                {navigation.label}
-              </Link>
-            ))}
-          </Flex>
-        </nav>
-        <Flex className="hidden desktop:flex" align="center">
-          {accessToken ? (
-            <>
-              {userData ? (
-                <Flex className="gap-6" align="center">
-                  <Button className="p-0 border-none shadow-none">
-                    <NotificationIcon />
-                  </Button>
-
-                  <Dropdown
-                    menu={{
-                      items,
-                    }}
-                  >
-                    <a onClick={(e) => e.preventDefault()}>
-                      <Button
-                        className="py-[12px] h-fit px-[30px] font-medium text-sm bg-skyBlue-500 border-0 shadow-none"
-                        type="primary"
-                      >
-                        {userData?.name}
-                      </Button>
-                    </a>
-                  </Dropdown>
-                </Flex>
-              ) : (
-                <Skeleton.Button
-                  className="rounded-[4px]"
-                  style={{ width: 200 }}
-                  size={40}
-                  active={true}
-                />
-              )}
-            </>
-          ) : (
-            <>
-              <Flex className="gap-3" align="center">
-                <Link to="login">
-                  <Button
-                    className="bg-transparent py-[12px] px-[18px] h-fit text-black-200 font-medium text-sm border-0 shadow-none"
-                    type="primary"
-                  >
-                    Giriş
-                  </Button>
-                </Link>
-                <Link to="register">
-                  <Button
-                    className="py-[12px] h-fit px-[30px] font-medium text-sm bg-skyBlue-500 border-0 shadow-none"
-                    type="primary"
-                  >
-                    Qeydiyyat
-                  </Button>
-                </Link>
-              </Flex>
-            </>
-          )}
-        </Flex>
-        <div className="block desktop:hidden">
-          <Hamburger
-            rounded
-            size={30}
-            toggled={burgerOpen}
-            toggle={setBurgerOpen}
-          />
+    <>
+      <div className="announcement">
+        <div className="container announcement-inner">
+          <span>Hər səhifədə yeni bir dünya.</span>
+          <span>
+            <Icon name="truck" size={16} /> 50 ₼-dan yuxarı çatdırılma pulsuz
+          </span>
         </div>
-      </Flex>
-    </header>
+      </div>
+      <header className="site-header">
+        <div className="container header-main">
+          <Link
+            className="brand"
+            to="/"
+            onClick={() => setMenuOpen(false)}
+            aria-label="Dolphin — ana səhifə"
+          >
+            <img src={logo} alt="" />
+            <span>
+              dolphin<span className="brand-dot">.</span>
+              <small>kitab & sevinc</small>
+            </span>
+          </Link>
+          <form className="search-form" role="search" onSubmit={search}>
+            <Icon name="search" />
+            <input
+              aria-label="Kitab və ya müəllif axtar"
+              placeholder="Növbəti hekayəni axtar..."
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+            <button type="submit" aria-label="Axtar">
+              <Icon name="arrow" size={19} />
+            </button>
+          </form>
+          <div className="header-actions">
+            <Link
+              className="account-link"
+              to={user ? "/profile" : "/login"}
+              aria-label={user ? `Hesabım — ${user.name}` : "Giriş / Qeydiyyat"}
+            >
+              <Icon name="user" size={21} />
+              <span>
+                <small>{user ? "Xoş gəldiniz" : "Hesabım"}</small>
+                <strong>
+                  {user ? user.name.split(" ")[0] : "Giriş / Qeydiyyat"}
+                </strong>
+              </span>
+            </Link>
+            <span className="action-divider" />
+            <Link
+              className="icon-button"
+              to="/favorites"
+              aria-label={`Sevimlilər (${favorites.length})`}
+            >
+              <Icon name="heart" />
+              {favorites.length > 0 && (
+                <span className="count-badge">{favorites.length}</span>
+              )}
+            </Link>
+            <Link
+              className="icon-button"
+              to="/cart"
+              aria-label={`Səbət (${cartCount})`}
+            >
+              <Icon name="bag" />
+              {cartCount > 0 && (
+                <span className="count-badge">{cartCount}</span>
+              )}
+            </Link>
+            <button
+              className="icon-button menu-toggle"
+              type="button"
+              aria-label={menuOpen ? "Menyunu bağla" : "Menyunu aç"}
+              aria-expanded={menuOpen}
+              aria-controls="main-navigation"
+              onClick={() => setMenuOpen((value) => !value)}
+            >
+              <Icon name={menuOpen ? "close" : "menu"} />
+            </button>
+          </div>
+        </div>
+        <div className={`navigation-wrap ${menuOpen ? "navigation-open" : ""}`}>
+          <nav
+            className="container main-navigation"
+            id="main-navigation"
+            aria-label="Əsas naviqasiya"
+          >
+            <div>
+              {links.map(([to, label]) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  className={to === "/discounts" ? "discount-link" : ""}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {label}
+                  {to === "/discounts" && <span className="nav-sale">%</span>}
+                </NavLink>
+              ))}
+            </div>
+            <span className="nav-note">
+              <span /> Oxumağa həmişə vaxt var
+            </span>
+          </nav>
+        </div>
+      </header>
+    </>
   );
 }
-
-export default Header;

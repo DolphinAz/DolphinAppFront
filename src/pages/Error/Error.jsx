@@ -1,11 +1,18 @@
-import React from "react";
-
-function Error() {
+import { Link } from "react-router-dom";
+import Icon from "../../components/Icon";
+export default function ErrorPage() {
   return (
-    <section className="px-5 desktop:px-10 pt-14 pb-40 text-center">
-      Axtardığınız nəticə tapılmadı
-    </section>
+    <main id="main-content" className="container standard-page">
+      <div className="empty-state">
+        <span className="error-number">404</span>
+        <h1>Bu səhifənin hekayəsi hələ yazılmayıb.</h1>
+        <p>
+          Axtardığın səhifə tapılmadı. Yeni bir kitab kəşf etməyə nə deyirsən?
+        </p>
+        <Link className="button button-primary" to="/">
+          Ana səhifəyə qayıt <Icon name="arrow" size={18} />
+        </Link>
+      </div>
+    </main>
   );
 }
-
-export default Error;

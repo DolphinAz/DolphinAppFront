@@ -1,114 +1,158 @@
-import React, { useEffect, useState } from "react";
-import CustomerForm from "../../components/CustomerForm/CustomerForm";
-import { Button, Flex } from "antd";
-import PaymentMethodsForm from "../../components/PaymentMethodsForm/PaymentMethodsForm";
-import VerificationForm from "../../components/VerificationForm/VerificationForm";
-import PaymentToast from "../../components/PaymentToast/PaymentToast";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useShop } from "../../state/ShopContext";
+import { cartTotal, money } from "../../state/store";
+import Icon from "../../components/Icon";
 
-function Payment() {
-  const [activeStep, setActiveStep] = useState(0);
-  const [isOrderPlaced, setIsOrderPlaced] = useState(false);
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }, [activeStep]);
-  const steps = [
-    {
-      label: "Customer details",
-      form: <CustomerForm />,
-    },
-    {
-      label: "Payment methods",
-      form: <PaymentMethodsForm />,
-    },
-    {
-      label: "Verification",
-      form: <VerificationForm />,
-    },
-  ];
-
+export default function Payment() {
+  const { cart, user, placeOrder } = useShop();
+  const [order, setOrder] = useState(null);
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
+  const [customer, setCustomer] = useState({
+    name: user.name,
+    email: user.email,
+    phone: user.phone || "",
+    address: user.address || "",
+    city: "Bakı",
+  });
+  const subtotal = cartTotal(cart);
+  const total = subtotal + (subtotal >= 50 ? 0 : 3.9);
+  function submit(event) {
+    event.preventDefault();
+    if (pending) return;
+    if (Object.values(customer).some((value) => !value.trim())) {
+      setError("Bütün məlumatları doldurun.");
+      return;
+    }
+    setPending(true);
+    try {
+      setOrder(placeOrder(customer));
+    } catch (issue) {
+      setError(issue.message);
+      setPending(false);
+    }
+  }
+  if (order)
+    return (
+      <main id="main-content" className="container standard-page">
+        <div className="empty-state order-success">
+          <span className="success-circle">
+            <Icon name="check" size={36} />
+          </span>
+          <span className="eyebrow">YENİ HEKAYƏYƏ HAZIRSAN</span>
+          <h1>Demo sifarişin saxlanıldı!</h1>
+          <p>
+            {order.id} · {money(order.total)}
+          </p>
+          <p>
+            Bu sifariş yalnız brauzerində saxlanılır. Ödəniş tutulmur və
+            çatdırılma sifarişi göndərilmir.
+          </p>
+          <Link className="button button-primary" to="/orders">
+            Sifarişlərimə bax <Icon name="arrow" size={18} />
+          </Link>
+        </div>
+      </main>
+    );
+  if (!cart.length)
+    return (
+      <main id="main-content" className="container standard-page">
+        <div className="empty-state">
+          <Icon name="bag" size={44} />
+          <h1>Səbətin boşdur</h1>
+          <p>Sifariş üçün əvvəlcə bir məhsul seç.</p>
+          <Link to="/books" className="button button-primary">
+            Kitablara bax
+          </Link>
+        </div>
+      </main>
+    );
   return (
-    <section className="px-5 desktop:px-10 flex flex-col gap-[50px] pt-28 pb-40">
-      <PaymentToast
-        isOrderPlaced={isOrderPlaced}
-        setIsOrderPlaced={setIsOrderPlaced}
-      />
-      <div
-        className={`relative w-full bg-gray-950 h-[1px] grid grid-cols-3 place-items-center`}
-      >
-        {steps.map((step, index) => (
-          <div
-            key={index}
-            className={`h-[1px] w-full flex justify-center ${
-              index < activeStep
-                ? "bg-black-100"
-                : index === activeStep
-                ? "bg-half-red"
-                : ""
-            }`}
-          >
-            <div
-              className="relative w-[10px] h-[10px] desktop:w-6 desktop:h-6 flex justify-center"
-              key={index}
-            >
-              <div
-                className={`border border-transparent rounded-full -translate-y-2/4 ${
-                  index === activeStep
-                    ? "w-full desktop:w-6 h-full desktop:h-6 !border-black-100 bg-white before:absolute before:w-2/4 before:h-2/4 before:bg-black-100 before:top-2/4 before:left-2/4 before:-translate-x-2/4 before:-translate-y-2/4 before:rounded-full"
-                    : index < activeStep
-                    ? "w-[5px] h-[5px] desktop:w-[10px] desktop:h-[10px] bg-black-100"
-                    : index > activeStep
-                    ? "w-2 h-2 desktop:w-4 desktop:h-4 bg-white !border-gray-950"
-                    : ""
-                }`}
-              ></div>
-              <p
-                className={`absolute -top-5 desktop:-top-12 left-2/4 -translate-x-2/4 text-center text-nowrap text-[8px] desktop:text-lg ${
-                  index < activeStep ? "text-black-100" : "text-gray-950"
-                }`}
-              >
-                {step.label}
-              </p>
-            </div>
+    <main id="main-content" className="container standard-page">
+      <div className="section-heading">
+        <div>
+          <span className="eyebrow">SON BİR ADDIM</span>
+          <h1>Sifarişi tamamla.</h1>
+          <p>Çatdırılma məlumatlarını əlavə et.</p>
+        </div>
+        <Link className="text-link" to="/cart">
+          Səbətə qayıt <Icon name="arrow" size={17} />
+        </Link>
+      </div>
+      <div className="checkout-layout">
+        <form
+          className="form-stack surface-card"
+          id="checkout-form"
+          onSubmit={submit}
+        >
+          <h2>Şəxsi məlumatlar</h2>
+          {[
+            ["name", "Ad və soyad", "text", "name"],
+            ["email", "E-poçt ünvanı", "email", "email"],
+            ["phone", "Telefon nömrəsi", "tel", "tel"],
+            ["city", "Şəhər", "text", "address-level2"],
+            ["address", "Çatdırılma ünvanı", "text", "street-address"],
+          ].map(([key, label, type, complete]) => (
+            <label key={key}>
+              {label}
+              <input
+                name={key}
+                type={type}
+                autoComplete={complete}
+                required
+                maxLength={key === "address" ? 240 : 120}
+                value={customer[key]}
+                onChange={(event) =>
+                  setCustomer((value) => ({
+                    ...value,
+                    [key]: event.target.value,
+                  }))
+                }
+              />
+            </label>
+          ))}
+          <div className="info-note">
+            <Icon name="shield" />
+            <p>
+              Demo rejim. Sifariş brauzerdə saxlanılır; real ödəniş və
+              çatdırılma həyata keçirilmir.
+            </p>
           </div>
-        ))}
-      </div>
-      <div>
-        {steps.map(
-          (step, index) =>
-            index === activeStep && <div key={index}>{step.form}</div>
-        )}
-        <Flex vertical className="gap-5 w-full desktop:w-2/4 mx-auto">
-          <Button
-            className="bg-skyBlue-500 py-[14px] h-14 text-white text-lg"
+          {error && (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          )}
+        </form>
+        <aside className="order-summary">
+          <h2>Sifarişin</h2>
+          {cart.map(({ product, quantity }) => (
+            <div className="checkout-product" key={product.id}>
+              <span>
+                {product.title} <small>× {quantity}</small>
+              </span>
+              <strong>{money(product.price * quantity)}</strong>
+            </div>
+          ))}
+          <div>
+            <span>Çatdırılma</span>
+            <strong>{subtotal >= 50 ? "Pulsuz" : money(3.9)}</strong>
+          </div>
+          <div className="summary-total">
+            <span>Cəmi</span>
+            <strong>{money(total)}</strong>
+          </div>
+          <button
+            className="button button-primary"
             type="submit"
-            onClick={() => setActiveStep((prev) => prev + 1)}
+            form="checkout-form"
+            disabled={pending}
           >
-            Davam et
-          </Button>
-          {activeStep === 2 && (
-            <Button
-              type="submit"
-              className="border-skyBlue-500 bg-gray-1000 py-[14px] h-14 text-lg text-skyBlue-500"
-            >
-              Yenidən yoxla
-            </Button>
-          )}
-          {activeStep !== 0 && (
-            <Button
-              onClick={() => setActiveStep((prev) => prev - 1)}
-              className="border-skyBlue-500 bg-gray-1000 py-[14px] h-14 text-lg text-skyBlue-500"
-              type="submit"
-            >
-              Geri
-            </Button>
-          )}
-        </Flex>
+            Demo sifarişi saxla <Icon name="check" size={18} />
+          </button>
+        </aside>
       </div>
-    </section>
+    </main>
   );
 }
-
-export default Payment;

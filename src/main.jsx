@@ -1,9 +1,14 @@
 import { createRoot } from "react-dom/client";
-import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
+import App from "./App.jsx";
+import ShopProvider from "./state/ShopProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+  <BrowserRouter
+    future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+  >
+    <ShopProvider>
+      <App />
+    </ShopProvider>
+  </BrowserRouter>,
 );

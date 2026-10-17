@@ -1,30 +1,148 @@
-import { Flex } from "antd";
-import React from "react";
-import ContactForm from "../../components/ContactForm/ContactForm";
-import contactImage from "../../assets/images/contact-image.jpg";
-function Contact() {
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useShop } from "../../state/ShopContext";
+import { readStorage, writeStorage } from "../../services/storage";
+import Icon from "../../components/Icon";
+
+export default function Contact() {
+  const { user } = useShop();
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
+  const [values, setValues] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+    message: "",
+  });
+  function submit(event) {
+    event.preventDefault();
+    if (!values.name.trim() || !values.message.trim()) {
+      setError("Adınızı və mesajınızı daxil edin.");
+      return;
+    }
+    const old = readStorage("dolphin.contact-drafts.v1", []);
+    if (
+      writeStorage("dolphin.contact-drafts.v1", [
+        ...(Array.isArray(old) ? old : []),
+        { ...values, createdAt: new Date().toISOString() },
+      ])
+    )
+      setSaved(true);
+    else setError("Mesajı saxlamaq mümkün olmadı. Brauzer yaddaşını yoxlayın.");
+  }
   return (
-    <section className="px-5 desktop:px-10 pt-16 pb-10 flex flex-col desktop:grid desktop:grid-cols-[2fr_1fr] gap-[47px]">
-      <Flex>
-        <Flex vertical gap={48} className="w-full">
-          <Flex vertical className="gap-4 desktop:gap-5">
-            <h1 className="text-4xl font-semibold text-black-100">
-              Əlaqəyə keç!
-            </h1>
-            <p className="text-black-300 text-[18px] desktop:text-xl">
-              Bizim mehriban komandamız sizdən eşitmək istərdi.
+    <main id="main-content" className="container standard-page">
+      <div className="contact-layout">
+        <div className="contact-intro">
+          <span className="eyebrow">SƏNİ DİNLƏMƏYƏ HAZIRIQ</span>
+          <h1>
+            Bir söhbətlə
+            <br />
+            başlayaq.
+          </h1>
+          <p>
+            Kitablar, oyuncaqlar və ya növbəti sevimlin haqqında bir sualın var?
+            Fikirlərini bizimlə bölüş.
+          </p>
+          <div className="contact-info">
+            <Icon name="book" size={25} />
+            <div>
+              <strong>Yeni bir hekayə axtarırsan?</strong>
+              <p>Kolleksiyamızda öz dünyanı tap.</p>
+              <Link className="text-link" to="/books">
+                Kitablara bax <Icon name="arrow" size={16} />
+              </Link>
+            </div>
+          </div>
+          <div className="info-note">
+            <Icon name="mail" size={20} />
+            <p>
+              Əlaqə xidməti hələ qoşulmayıb. Bu forma mesajını yalnız bu
+              brauzerdə qaralama kimi saxlayır.
             </p>
-          </Flex>
-          <ContactForm />
-        </Flex>
-      </Flex>
-      <img
-        className="hidden desktop:block object-cover h-full"
-        src={contactImage}
-        alt="Contact image"
-      />
-    </section>
+          </div>
+        </div>
+        <section className="surface-card contact-form">
+          {saved ? (
+            <div className="empty-state compact-empty">
+              <span className="success-circle">
+                <Icon name="check" size={30} />
+              </span>
+              <h2>Qaralaman saxlanıldı</h2>
+              <p>
+                Mesaj bu brauzerdə saxlanılıb. Hələ komandaya göndərilməyib.
+              </p>
+              <button
+                className="button button-outline"
+                onClick={() => {
+                  setSaved(false);
+                  setValues((current) => ({ ...current, message: "" }));
+                }}
+              >
+                Yeni qaralama
+              </button>
+            </div>
+          ) : (
+            <form className="form-stack" onSubmit={submit}>
+              <h2>Fikirlərini bölüş</h2>
+              <label>
+                Ad və soyad
+                <input
+                  required
+                  autoComplete="name"
+                  minLength={2}
+                  maxLength={80}
+                  value={values.name}
+                  onChange={(event) =>
+                    setValues((current) => ({
+                      ...current,
+                      name: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+              <label>
+                E-poçt ünvanı
+                <input
+                  type="email"
+                  required
+                  autoComplete="email"
+                  maxLength={120}
+                  value={values.email}
+                  onChange={(event) =>
+                    setValues((current) => ({
+                      ...current,
+                      email: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+              <label>
+                Mesajın
+                <textarea
+                  required
+                  rows={5}
+                  maxLength={3000}
+                  value={values.message}
+                  onChange={(event) =>
+                    setValues((current) => ({
+                      ...current,
+                      message: event.target.value,
+                    }))
+                  }
+                />
+              </label>
+              {error && (
+                <p className="form-error" role="alert">
+                  {error}
+                </p>
+              )}
+              <button className="button button-primary" type="submit">
+                Qaralama kimi saxla <Icon name="arrow" size={18} />
+              </button>
+            </form>
+          )}
+        </section>
+      </div>
+    </main>
   );
 }
-
-export default Contact;

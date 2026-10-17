@@ -1,137 +1,60 @@
-import { Flex } from "antd";
-import React from "react";
-import siteLogo from "../../assets/images/site-logo.png";
-import InstagramIcon from "../../assets/icons/InstagramIcon";
-import FacebookIcon from "../../assets/icons/FacebookIcon";
-import TelegramIcon from "../../assets/icons/TelegramIcon";
 import { Link } from "react-router-dom";
-function Footer() {
-  const navigations = [
-    {
-      label: "Kateqoriya",
-      items: [
-        {
-          label: "Ən çox satılanlar",
-          value: "/best-seller",
-          isNew: false,
-        },
-        {
-          label: "Yeni kitablar",
-          value: "/new-books",
-          isNew: true,
-        },
-        {
-          label: "Sifarişlər",
-          value: "/orders",
-          isNew: false,
-        },
-        {
-          label: "Yeni gələnlər",
-          value: "/new-arrivals",
-          isNew: false,
-        },
-        {
-          label: "Qiymətlər",
-          value: "/prices",
-          isNew: false,
-        },
-      ],
-    },
-    {
-      label: "Əlaqə",
-      items: [
-        {
-          label: "Haqqımızda",
-          value: "/about",
-        },
-        {
-          label: "Press",
-          value: "/press",
-        },
-        {
-          label: "Xəbərlər",
-          value: "/news",
-        },
-        {
-          label: "Contact",
-          value: "/contact",
-        },
-      ],
-    },
-    {
-      label: "Follow us",
-      items: [
-        {
-          label: "Instagram",
-          value: "#",
-          icon: <InstagramIcon />,
-        },
-        {
-          label: "Facebook",
-          value: "#",
-          icon: <FacebookIcon />,
-        },
-        {
-          label: "Telegram",
-          value: "#",
-          icon: <TelegramIcon />,
-        },
-      ],
-    },
-  ];
-
+import Icon from "../Icon";
+import logo from "../../assets/images/site-logo.png";
+export default function Footer() {
   return (
-    <footer className="bg-gray-800 px-5 desktop:px-10 pt-16 pb-6 desktop:pb-12 flex flex-col gap-8 desktop:gap-16">
-      <Flex
-        justify="space-between"
-        className="desktop:gap-4 flex-col-reverse desktop:flex-row"
-      >
-        <Flex
-          vertical
-          className="pt-8 desktop:p-0 gap-5 w-full desktop:max-w-[409px] border-t desktop:border-none border-gray-900"
-        >
-          <img
-            className="object-cover w-20 h-20 "
-            src={siteLogo}
-            alt="Site Logo"
-          />
-          <p className="hidden desktop:block">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum
+    <footer className="site-footer">
+      <div className="container footer-main">
+        <div className="footer-brand">
+          <Link className="brand" to="/">
+            <img src={logo} alt="" />
+            <span>
+              dolphin<span className="brand-dot">.</span>
+              <small>kitab & sevinc</small>
+            </span>
+          </Link>
+          <p>
+            Böyük hekayələrə, kiçik sevinclərə və hər yaşda kəşf etməyə
+            inananlar üçün.
           </p>
-        </Flex>
-        <div
-          gap={20}
-          className="pb-10 desktop:p-0 desktop:flex desktop:flex-wrap desktop:justify-end grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-8"
-        >
-          {navigations.map((navigation, index) => (
-            <Flex key={index} vertical className="gap-4 desktop:w-[214px]">
-              <h1 className="font-semibold">{navigation.label}</h1>
-              <ul className="flex flex-col gap-3">
-                {navigation.items.map((item, index) => (
-                  <Link key={index} to={item.value}>
-                    <li className="text-[14px] flex gap-2 items-center">
-                      {item.label}
-                      {item.isNew ? (
-                        <span className="py-[2px] px-2 bg-green-200 text-green-100 rounded-2xl">
-                          New
-                        </span>
-                      ) : (
-                        ""
-                      )}
-                    </li>
-                  </Link>
-                ))}
-              </ul>
-            </Flex>
-          ))}
+          <span className="footer-signature">Bir kitab. Min yeni dünya.</span>
         </div>
-      </Flex>
-      <p className="font-light text-gray-250 desktop:text-gray-150 ">
-        © 2077 Untitled UI. All rights reserved.
-      </p>
+        <div>
+          <h3>Kəşf et</h3>
+          <Link to="/books">Bütün kitablar</Link>
+          <Link to="/best-seller">Ən çox satılanlar</Link>
+          <Link to="/discounts">Endirimli məhsullar</Link>
+          <Link to="/toys">Oyuncaqlar</Link>
+        </div>
+        <div>
+          <h3>Dolphin</h3>
+          <Link to="/about">Haqqımızda</Link>
+          <Link to="/contact">Bizimlə əlaqə</Link>
+          <Link to="/profile">Hesabım</Link>
+          <Link to="/orders">Sifarişlərim</Link>
+        </div>
+        <div className="footer-note">
+          <span className="footer-book-icon">
+            <Icon name="book" size={27} />
+          </span>
+          <h3>Yeni bir səhifə aç.</h3>
+          <p>Növbəti sevimli kitabın səni burada gözləyir.</p>
+          <Link to="/books" className="text-link">
+            Kolleksiyanı kəşf et <Icon name="arrow" size={17} />
+          </Link>
+        </div>
+      </div>
+      <div className="container footer-bottom">
+        <span>
+          © {new Date().getFullYear()} Dolphin. Bütün hüquqlar qorunur.
+        </span>
+        <span>
+          Kitab məlumatları:{" "}
+          <a href="https://openlibrary.org" target="_blank" rel="noreferrer">
+            Open Library
+          </a>
+        </span>
+      </div>
     </footer>
   );
 }
-
-export default Footer;

@@ -1,98 +1,293 @@
-import React, { useEffect, useState } from "react";
-import siteLogo from "../../assets/images/dolphin-logo.png";
-import LoginForm from "../../components/LoginForm/LoginForm";
-import { Button } from "antd";
-import ArrowLeftIcon from "../../assets/icons/ArrowLeftIcon";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import Footer from "../../components/Footer/Footer";
-import Header from "../../components/Header/Header";
-import RegisterForm from "../../components/RegisterForm/RegisterForm";
-import ResetPasswordForm from "../../components/ResetPasswordForm/ResetPasswordForm";
+import { useState } from "react";
+import {
+  Link,
+  Navigate,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+import toast from "react-hot-toast";
+import { useShop } from "../../state/ShopContext";
+import Icon from "../../components/Icon";
+import Cover from "../../components/Cover";
+import logo from "../../assets/images/site-logo.png";
 
-function Auth() {
-  const location = useLocation();
-  const [currentMenu, setCurrentMenu] = useState("/login");
-  const [currentScreen, setCurrentScreen] = useState(window.innerWidth);
-  const [currentForm, setCurrentForm] = useState(location.pathname);
+export default function Auth() {
+  const { user, books, authenticate } = useShop();
+  const { pathname } = useLocation();
+  const [params] = useSearchParams();
   const navigate = useNavigate();
-  useEffect(() => {
-    setCurrentForm(location.pathname);
-    setCurrentMenu(location.pathname);
-  }, [location.pathname]);
-  useEffect(() => {
-    const handleResize = () => {
-      setCurrentScreen(window.innerWidth);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  const menu = [
-    {
-      label: "Giriş",
-      value: "/login",
-    },
-    {
-      label: "Qeydiyyat",
-      value: "/register",
-    },
-  ];
+  const register = pathname === "/register";
+  const reset = pathname === "/reset-password";
+  const next = params.get("next");
+  const destination =
+    next?.startsWith("/") &&
+    !next.startsWith("//") &&
+    !next.includes("\\") &&
+    !/^\/(login|register|reset-password)([/?#]|$)/.test(next)
+      ? next
+      : "/profile";
+  const [values, setValues] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirm: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+  const [terms, setTerms] = useState(false);
+  if (user && !reset) return <Navigate to={destination} replace />;
+  const change = (event) => {
+    setValues((current) => ({
+      ...current,
+      [event.target.name]: event.target.value,
+    }));
+    setError("");
+  };
+  const switchPath = `${register ? "/login" : "/register"}${next ? `?next=${encodeURIComponent(destination)}` : ""}`;
+  async function submit(event) {
+    event.preventDefault();
+    if (pending) return;
+    if (register && values.password !== values.confirm) {
+      setError("Şifrələr eyni olmalıdır.");
+      return;
+    }
+    if (register && !terms) {
+      setError("Brauzerdə yerli hesab yaradılmasını təsdiqləyin.");
+      return;
+    }
+    setPending(true);
+    setError("");
+    try {
+      await authenticate(values, register);
+      toast.success(
+        register
+          ? "Hesabınız yaradıldı. Xoş gəldiniz!"
+          : "Yenidən xoş gəldiniz!",
+      );
+      navigate(destination, { replace: true });
+    } catch (issue) {
+      setError(issue.message || "Əməliyyat baş tutmadı. Yenidən cəhd edin.");
+    } finally {
+      setPending(false);
+    }
+  }
   return (
-    <>
-      {currentScreen < 1024 ? <Header /> : ""}
-      <section className="relative desktop:h-screen desktop:grid desktop:grid-cols-[60%_40%] px-10 desktop:px-0 py-24 desktop:py-0">
-        <Button
-          onClick={() => navigate("/")}
-          className="absolute top-6 left-10 desktop:top-10 desktop:left-[unset] desktop:right-20 bg-gray-500 p-0 w-7 h-7 desktop:w-12 desktop:h-12 rounded-full"
-          type="submit"
-        >
-          <ArrowLeftIcon />
-        </Button>
-        <div className="custom-clipPath bg-skyBlue-400 h-screen hidden desktop:flex items-center">
-          <img className="w-[500px] h-[500px]" src={siteLogo} alt="" />
-        </div>
-        {!currentMenu.includes("/reset-password") && (
-          <div className="block desktop:hidden">
-            <div className="grid grid-cols-2 place-items-center h-11">
-              {menu.map((menuItem, index) => (
-                <Link
-                  onClick={() => setCurrentMenu(menuItem.value)}
-                  key={index}
-                  className="w-full text-center"
-                  to={menuItem.value}
-                >
-                  <span
-                    className={`w-full flex justify-center cursor-pointer pb-2 border-b duration-300 ${
-                      currentMenu === menuItem.value
-                        ? "font-medium border-skyBlue-500"
-                        : "font-normal"
-                    }`}
-                  >
-                    {menuItem.label}
-                  </span>
-                </Link>
-              ))}
+    <main id="main-content" className="auth-page">
+      <section className="auth-story">
+        <Link className="brand" to="/">
+          <img src={logo} alt="" />
+          <span>
+            dolphin<span className="brand-dot">.</span>
+            <small>kitab & sevinc</small>
+          </span>
+        </Link>
+        <div className="auth-story-content">
+          <span className="eyebrow">HƏR SƏHİFƏ YENİ BAŞLANĞICDIR</span>
+          <h2>
+            Yaxşı hekayələr
+            <br />
+            bir yerdə başlayır.
+          </h2>
+          <p>
+            Sevimli kitablarını seç. Xəyallarına yer aç.
+            <br />
+            Dolphin dünyasına xoş gəlmisən.
+          </p>
+          <div className="auth-book-scene">
+            <div className="auth-book-one">
+              <Cover product={books[3]} eager />
             </div>
+            <div className="auth-book-two">
+              <Cover product={books[1]} eager />
+            </div>
+            <span className="auth-spark">✦</span>
           </div>
-        )}
-
-        <div className="flex items-center justify-center desktop:justify-start px-0 desktop:px-10 pt-[17px] desktop:p-10">
-          {currentForm === "/login" && currentMenu === "/login" ? (
-            <LoginForm />
-          ) : currentForm === "/register" && currentMenu === "/register" ? (
-            <RegisterForm />
-          ) : currentForm === "/reset-password" ? (
-            <ResetPasswordForm />
+        </div>
+        <span className="auth-story-footer">Bir kitab. Min yeni dünya.</span>
+      </section>
+      <section className="auth-panel">
+        <Link className="auth-back" to="/">
+          <span>
+            <Icon name="arrow" size={17} />
+          </span>
+          Mağazaya qayıt
+        </Link>
+        <div className="auth-form-wrap">
+          <span className="auth-form-icon">
+            <Icon
+              name={register ? "sparkles" : reset ? "shield" : "book"}
+              size={24}
+            />
+          </span>
+          <span className="eyebrow">
+            DOLPHIN AİLƏSİNƏ {register ? "QOŞUL" : "XOŞ GƏLDİN"}
+          </span>
+          <h1>
+            {register
+              ? "Yeni bir səhifə aç."
+              : reset
+                ? "Şifrə ilə bağlı kömək"
+                : "Yenidən xoş gəldin."}
+          </h1>
+          <p className="auth-description">
+            {register
+              ? "Sevimlilərini və sifarişlərini bir hesabda saxla."
+              : reset
+                ? "Bu tətbiqdə hesablar yalnız bu brauzerdə saxlanılır."
+                : "Hekayənə qaldığın yerdən davam et."}
+          </p>
+          {reset ? (
+            <div className="reset-help">
+              <p>
+                E-poçt ilə şifrə bərpası qoşulmayıb. Hesabınıza girişiniz varsa,
+                profilinizin “Şifrə” bölməsində mövcud şifrəni dəyişə
+                bilərsiniz.
+              </p>
+              <p>
+                Şifrəni unutmusunuzsa, başqa e-poçt ünvanı ilə yeni yerli hesab
+                yarada bilərsiniz.
+              </p>
+              <Link className="button button-primary" to="/login">
+                Girişə qayıt
+              </Link>
+            </div>
           ) : (
-            ""
+            <>
+              <form className="form-stack" onSubmit={submit}>
+                {register && (
+                  <label>
+                    Ad və soyad
+                    <input
+                      name="name"
+                      autoComplete="name"
+                      placeholder="Adınızı daxil edin"
+                      required
+                      minLength={2}
+                      maxLength={80}
+                      value={values.name}
+                      onChange={change}
+                    />
+                  </label>
+                )}
+                <label>
+                  E-poçt ünvanı
+                  <input
+                    type="email"
+                    name="email"
+                    autoComplete="email"
+                    placeholder="adiniz@misal.com"
+                    required
+                    maxLength={120}
+                    value={values.email}
+                    onChange={change}
+                  />
+                </label>
+                <label>
+                  Şifrə
+                  <div className="password-field">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      autoComplete={
+                        register ? "new-password" : "current-password"
+                      }
+                      placeholder={
+                        register ? "Ən azı 8 simvol" : "Şifrənizi daxil edin"
+                      }
+                      required
+                      minLength={register ? 8 : 1}
+                      maxLength={128}
+                      value={values.password}
+                      onChange={change}
+                    />
+                    <button
+                      type="button"
+                      aria-label={
+                        showPassword ? "Şifrəni gizlət" : "Şifrəni göstər"
+                      }
+                      aria-pressed={showPassword}
+                      onClick={() => setShowPassword((value) => !value)}
+                    >
+                      <Icon name="eye" size={19} />
+                    </button>
+                  </div>
+                </label>
+                {register && (
+                  <label>
+                    Şifrəni təkrar et
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="confirm"
+                      autoComplete="new-password"
+                      placeholder="Şifrənizi yenidən daxil edin"
+                      required
+                      minLength={8}
+                      maxLength={128}
+                      value={values.confirm}
+                      onChange={change}
+                    />
+                  </label>
+                )}
+                {register ? (
+                  <label className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={terms}
+                      onChange={(event) => setTerms(event.target.checked)}
+                      required
+                    />
+                    <span>
+                      Məlumatlarımın bu brauzerdə saxlanılmasına razıyam.
+                    </span>
+                  </label>
+                ) : (
+                  <div className="form-aside">
+                    <span>
+                      <Icon name="shield" size={14} /> Giriş 30 gün saxlanılır
+                    </span>
+                    <Link to="/reset-password">Şifrəni unutmusan?</Link>
+                  </div>
+                )}
+                {error && (
+                  <div className="form-error" role="alert">
+                    {error}
+                  </div>
+                )}
+                <button
+                  className="button button-primary auth-submit"
+                  disabled={pending}
+                  type="submit"
+                >
+                  {pending
+                    ? "Gözləyin…"
+                    : register
+                      ? "Hesab yarat"
+                      : "Daxil ol"}
+                  {!pending && <Icon name="arrow" size={18} />}
+                </button>
+              </form>
+              <p className="auth-switch">
+                {register ? "Artıq hesabın var?" : "Hələ hesabın yoxdur?"}{" "}
+                <Link to={switchPath}>
+                  {register ? "Daxil ol" : "Qeydiyyatdan keç"}
+                </Link>
+              </p>
+              <div className="local-account-note">
+                <Icon name="shield" size={16} />
+                <p>
+                  Yerli hesab: məlumatlar bu cihazın brauzerində saxlanılır.
+                  Başqa cihazlarla sinxronlaşmır.
+                </p>
+              </div>
+            </>
           )}
         </div>
+        <span className="auth-copyright">
+          © {new Date().getFullYear()} Dolphin. Sevərək oxu.
+        </span>
       </section>
-      {currentScreen < 1024 ? <Footer /> : ""}
-    </>
+    </main>
   );
 }
-
-export default Auth;
